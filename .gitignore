@@ -1,0 +1,84 @@
+# Build directories
+build/
+Build/
+bin/
+obj/
+out/
+dist/
+Debug/
+Release/
+cmake-build-*/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Makefile
+install_manifest.txt
+Testing/
+
+*.d
+
+# Object files
+*.o
+*.obj
+*.lo
+*.la
+*.slo
+
+# Libraries
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug symbols
+*.dSYM/
+*.pdb
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# CLion / IntelliJ
+.idea/
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.VC.db
+
+# Xcode
+DerivedData/
+*.xcworkspace/
+*.xcuserdata/
+*.xccheckout
+*.xcuserstate
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.VolumeIcon.icns
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
