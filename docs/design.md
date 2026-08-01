@@ -26,4 +26,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 - [ ] parsing file BIF
 - [ ] costruzione del DAG
-- [ ]
+- [ ] ordinamento topologico
+- [ ] calcolo probabilità congiunta
+- [ ] probabilità marginale (con enumerazione completa)
+- [ ] variable elimination
