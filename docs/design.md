@@ -22,7 +22,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 - **Elimination**: implementerà eventualmente l'algoritmo di variable elimination per il calcolo delle probabilità (più efficiente dell'enumerazione completa).
 
-## Stato di avanzamento
+## Stato di avanzamento
 
 - [ ] parsing file BIF
 - [ ] costruzione del DAG
