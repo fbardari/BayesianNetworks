@@ -14,7 +14,7 @@ Il progetto è suddiviso nei seguenti moduli:
 - **Parser**: legge un file in formato BIF e salva le variabili della rete (nome, valori possibili, genitori, CPT).
 - Classe **Network**:
     - rappresenta la rete bayesiana come DAG;
-    - conserva le variabili della rete (rappresentate da struct opportunamente definite), le liste di adiacenza e l'ordinamento topologico;
+    - conserva le variabili della rete (rappresentate dalla struct **Variable** definita nel file *Variable.hpp*), le liste di adiacenza e l'ordinamento topologico;
     - contiene i getter per il calcolo delle probabilità marginali e condizionali.
 - **Utilities**: funzioni di supporto generiche (es. stampa di vettori)
 
