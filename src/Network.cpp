@@ -103,3 +103,29 @@ void Network::updateTopologicalOrder() {
 
     topologicalOrder = result;
 }
+
+const std::vector<int>& Network::getChildren(int id) const {
+    if (id >= 0 && id < size()) {
+        return adj[id];
+    } else {
+        throw std::out_of_range("Network::getChildren: nessun elemento con id = " + std::to_string(id));
+    }
+}
+
+
+int Network::getVariableId(const std::string& name) const {
+        auto iterator = id.find(name);
+        if (iterator == id.end())
+            throw std::invalid_argument("Network::getVariableId: variabile \"" + name + "\" non trovata");
+        return iterator->second;
+}
+
+int Network::getValueIndex(int variableId, const std::string& valueName) const {
+    const Variable& variable = variables[variableId];
+
+    for (int i = 0; i < variable.values.size(); i++) {
+        if (variable.values[i] == valueName) return i;
+    }
+
+    throw std::invalid_argument("Network::getValueIndex: non c'è nessun valore di nome \"" + valueName + "\" per la variabile \"" + variables[variableId].name + "\"");
+}

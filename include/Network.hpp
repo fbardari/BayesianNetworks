@@ -60,13 +60,14 @@ inline const std::vector<std::string>& getValues(const std::string& variableName
     return variables[getVariableId(variableName)].values;
 }
 
+// getter per liste di adiacenza
+const std::vector<int>& getChildren(int id) const;
+
+// (ID variabile, nome valore) -> ID valore
+int getValueIndex(int variableId, const std::string& valueName) const;
+
 // nome variabile -> ID variabile
-inline int getVariableId(const std::string& name) const {
-        auto iterator = id.find(name);
-        if (iterator == id.end())
-            throw std::invalid_argument("Network::getVariableId: variabile \"" + name + "\" non trovata");
-        return iterator->second;
-}
+int getVariableId(const std::string& name) const;
 
 /*  overload dell'operatore []
 network[ID] restituisce una reference alla variabile con quell'ID  */ 

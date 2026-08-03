@@ -5,7 +5,6 @@
 
 
 int main() {
-    Network network;
 
     Variable v1 = {
         "a",
@@ -24,13 +23,20 @@ int main() {
     Variable v3 = {
         "c",
         {"true", "false"},
+        {1},
+        {{0.4, 0.6}, {0.5, 0.5}}
+    };
+
+    Variable v4 = {
+        "d",
+        {"true", "false"},
         {0},
         {{0.4, 0.6}, {0.5, 0.5}}
     };
 
-    network.addVariable(v1);
-    network.addVariable(v2);
-    network.addVariable(v3);
+    Network network({v1, v2, v3, v4});
 
-    std::cout << network.getTopologicalOrder();
+    std::cout << network.getTopologicalOrder() << "\n";
+    std::cout << network.getChildren(1) << "\n";
+    std::cout << network.getValueIndex(1, "true");
 }

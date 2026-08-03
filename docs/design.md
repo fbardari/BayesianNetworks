@@ -57,6 +57,8 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - network.**getTopologicalOrder**() restituisce il vettore che contiene gli ID delle variabili in ordine topologico;
     - network.**getValues**(variableName): nome variabile -> nomi valori possibili (es. *true/false*);
     - network.**getVariableId**(name): nome variabile -> ID (in altre parole, accesso in sola lettura alla mappa **id**);
+    - network.**getChildren**(id): getter per liste di adiacenza, id genitore -> vettore con id dei figli.
+    - network.**getValueIndex**(variableId, valueName): (ID variabile, nome valore) -> ID valore (per esempio "true" = 0, "false" = 1 ...);
     - **network\[variableId\]** = overload dell'operatore [] che restituisce una reference alla variabile con l'ID specificato.
 
 ### Fase 2: parsing file BIF
