@@ -41,7 +41,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - **topologicalOrder**: vettore che contiene gli ID delle variabili ordinate secondo l'ordine topologico;
 - e dei seguenti metodi:
     - **addVariable**(variable): prende in input una reference a un oggetto del tipo Variable e lo aggiunge al network (facendo tutti i controlli necessari e aggiornando i campi, incluso l'ordine topologico);
-    - **updateTopologicalOrder**(): aggiorna l'ordine topologico (viene chiamato ogni volta che vieen aggiunta una variabile) (-> inoltre è in grado di controllare se il network è ciclico, sollevando eventualmente un'eccezione).
+    - **updateTopologicalOrder**(): aggiorna l'ordine topologico (viene chiamato ogni volta che viene aggiunta una variabile) (-> inoltre è in grado di controllare se il network è ciclico, sollevando eventualmente un'eccezione).
 - Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
     - **name** è il nome della variabile;
     - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);
