@@ -63,7 +63,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 ### Fase 2: parsing file BIF
 
-- ...
+- In generale, il modulo Parser deve contenere una funzione del tipo **importBIF(filePath)** che dato il pecorso di un file BIF restituisce l'oggetto di tipo Network costruito secondo i dati trovati nel file.
 
 ### Fase 3: calcolo delle probabilità
 
