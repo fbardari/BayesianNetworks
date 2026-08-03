@@ -38,6 +38,11 @@ public:
 aggiornando la mappa degli id e le liste di adiacenza */
 void addVariable(const Variable& variable);
 
+// *** COSTRUTTORI ***
+
+Network(); // crea rete vuota
+Network(const std::vector<Variable>& variables); // crea rete partendo da un vettore di variabili
+
 // *** GETTER VARI ***
 
 // restituisce il numero di variabili del network

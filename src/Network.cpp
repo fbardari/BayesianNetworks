@@ -38,6 +38,40 @@ void Network::addVariable(const Variable& variable) {
     updateTopologicalOrder();
 }
 
+
+Network::Network() = default;
+
+Network::Network(const std::vector<Variable>& variables) {
+    int n = variables.size();
+
+    this->variables.reserve(n);
+    adj.resize(n);
+
+    // salvo variabili e costruisco la mappa id, controllando nomi duplicati
+    for (int i = 0; i < n; i++) {
+        if (this->id.find(variables[i].name) != this->id.end()) {
+            throw std::invalid_argument("Esiste già una variabile con nome: " + variables[i].name);
+        }
+        this->variables.push_back(variables[i]);
+        this->id[variables[i].name] = i;
+    }
+
+    // aggiorno adj, controllando che ogni parentId sia valido
+    for (int i = 0; i < n; i++) {
+        for (int parentId : variables[i].parents) {
+            if (parentId < 0 || parentId >= n) {
+                throw std::invalid_argument(
+                    "Network::Network: genitore con id " + std::to_string(parentId) +
+                    " non esiste (variabile \"" + variables[i].name + "\")"
+                );
+            }
+            adj[parentId].push_back(i);
+        }
+    }
+
+    updateTopologicalOrder(); // aggiorna ordine topologico
+}
+
 void Network::updateTopologicalOrder() {
     int n = variables.size(); // quante variabili ci sono nel network
 

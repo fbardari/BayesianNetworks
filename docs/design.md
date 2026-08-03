@@ -40,7 +40,10 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);
     - **parents** è un vettore che contiene gli ID dei genitori;
     - **CPT** (*Conditional Probability Table*) è la tabella che contiene le probabilità condizionate dai valori assunti dai genitori.
-- In questa prima fase costruisco la classe **Network** (*Network.hpp*, *Network.cpp*) a livello base, in particolare è dotata dei seguenti campi privati:
+- In questa prima fase costruisco la classe **Network** (*Network.hpp*, *Network.cpp*) a livello base, in particolare è dotata dei seguenti costruttori
+    - Network(): costruttore standard, crea una rete vuota;
+    - Network(variables): costruisce una rete partendo da un vettore di oggetti di tipo Variable.
+- dei seguenti campi privati:
     - **variables**: vettore di elementi di tipo Variable che contiene tutte le variabili (i.e. i nodi) del network
     - la lista di adiacenza **adj**, costruita in modo che: adj[ID] contiene la lista dei figli di una variabile dato il suo ID;
     - **id**: una unordered map che associa ad ogni nome l'ID della variabile corrispondente;
