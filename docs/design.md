@@ -38,8 +38,10 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - **variables**: vettore di elementi di tipo Variable che contiene tutte le variabili (i.e. i nodi) del network
     - la lista di adiacenza **adj**, costruita in modo che: adj[ID] contiene la lista dei figli di una variabile dato il suo ID;
     - **id**: una unordered map che associa ad ogni nome l'ID della variabile corrispondente;
+    - **topologicalOrder**: vettore che contiene gli ID delle variabili ordinate secondo l'ordine topologico;
 - e dei seguenti metodi:
-    - **addVariable**(variable): prende in input una reference a un oggetto del tipo Variable e lo aggiunge al network (facendo tutti i controlli necessari e aggiornando i campi).
+    - **addVariable**(variable): prende in input una reference a un oggetto del tipo Variable e lo aggiunge al network (facendo tutti i controlli necessari e aggiornando i campi, incluso l'ordine topologico);
+    - **updateTopologicalOrder**(): aggiorna l'ordine topologico (viene chiamato ogni volta che vieen aggiunta una variabile) (-> inoltre è in grado di controllare se il network è ciclico, sollevando eventualmente un'eccezione).
 - Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
     - **name** è il nome della variabile;
     - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);

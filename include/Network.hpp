@@ -25,6 +25,12 @@ std::vector<std::vector<int>> adj;
 // mappa: name -> id
 std::unordered_map<std::string, int> id;
 
+// vettore degli id ordinati secondo l'ordine topologico
+std::vector<int> topologicalOrder;
+
+// aggiorna il vettore topologicalOrder
+void updateTopologicalOrder();
+
 public:
 
 /* aggiunge un oggetto del tipo variabile al network,

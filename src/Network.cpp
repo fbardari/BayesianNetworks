@@ -1,6 +1,7 @@
 #include "Network.hpp"
 
 #include <stdexcept>
+#include <queue>
 
 void Network::addVariable(const Variable& variable) {
     // eccezione se esiste già una variabile con quel nome
@@ -23,5 +24,38 @@ void Network::addVariable(const Variable& variable) {
         adj[parentId].push_back(variableId);
     }
 
-    // TODO: aggiornare ordine topologico quando sarà implementato
+    // aggiornare ordine topologico
+    updateTopologicalOrder();
+}
+
+void Network::updateTopologicalOrder() {
+    int n = variables.size(); // quante variabili ci sono nel network
+
+    std::vector<int> parentsCount(n, 0); // numero genitori per ogni variabile
+    std::vector<int> result;
+    std::queue<int> q; // coda
+
+    for (int i = 0; i < n; i++) {
+        parentsCount[i] = variables[i].parents.size(); // conto i genitori di ogni variabile
+        if (parentsCount[i] == 0) q.push(i); // se non ha genitori allora metto in coda
+    }
+
+    while (!q.empty()) {
+        int u = q.front(); // estraggo un nodo senza genitori da processare
+        q.pop();
+        result.push_back(u); // inserisco in result
+
+        // ciclo sui figli del genitore estratto
+        for (int childId : adj[u]) {
+            parentsCount[childId]--; // abbiamo processato il genitore
+
+            /* se il figlio non ha più genitori da processare
+               metto il figlio in coda */ 
+            if (parentsCount[childId] == 0) q.push(childId);
+        }
+    }
+
+    if (result.size() != n) throw std::runtime_error("Network::updateTopologicalOrder: errore network ciclico");
+
+    topologicalOrder = result;
 }
