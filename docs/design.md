@@ -62,3 +62,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 ### Fase 2: parsing file BIF
 
 - ...
+
+### Fase 3: calcolo delle probabilità
+
+- ...
