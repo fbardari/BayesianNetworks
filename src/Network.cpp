@@ -1,5 +1,7 @@
 #include "Network.hpp"
 
+#include <stdexcept>
+
 void Network::addVariable(const Variable& variable) {
     // eccezione se esiste già una variabile con quel nome
     if (id.find(variable.name) != id.end()) {
