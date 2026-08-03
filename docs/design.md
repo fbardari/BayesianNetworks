@@ -24,7 +24,8 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 ## Stato di avanzamento
 
-1. [ ] costruzione della classe Network a livello base
+1. [x] costruzione della classe Network a livello base
+    - [ ] capacità di leggere le probabilità dalla CPT
 2. [ ] parsing file BIF
 3. [ ] ordinamento topologico
 4. [ ] calcolo probabilità congiunta
