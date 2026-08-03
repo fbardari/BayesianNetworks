@@ -25,7 +25,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 ## Stato di avanzamento
 
 1. [x] costruzione della classe Network a livello base
-    - [ ] capacità di leggere le probabilità dalla CPT
+    - [ ] capacità di leggere le probabilità dalla CPT: *mi serve una funzione che data una variabile e un assignment completo mi dia la corrispondente riga in cui trovo la probabilità condizionale corretta*
 2. [ ] parsing file BIF
 3. [ ] ordinamento topologico
 4. [ ] calcolo probabilità congiunta
