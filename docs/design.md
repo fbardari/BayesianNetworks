@@ -24,9 +24,28 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 ## Stato di avanzamento
 
+- [ ] costruzione della classe Network a livello base
 - [ ] parsing file BIF
-- [ ] costruzione del DAG
 - [ ] ordinamento topologico
 - [ ] calcolo probabilità congiunta
 - [ ] probabilità marginale (con enumerazione completa)
+- [ ] probabilità condizionale
 - [ ] variable elimination
+
+### Fase 1: strutture per rappresentare la rete bayesiana
+
+- In questa prima fase costruisco la classe **Network** (*Network.hpp*, *Network.cpp*) a livello base, in particolare è dotata dei seguenti campi privati:
+    - **variables**: vettore di elementi di tipo Variable che contiene tutte le variabili (i.e. i nodi) del network
+    - la lista di adiacenza **adj**, costruita in modo che: adj[ID] contiene la lista dei figli di una variabile dato il suo ID;
+    - **id**: una unordered map che associa ad ogni nome l'ID della variabile corrispondente;
+- e dei seguenti metodi:
+    - **addVariable**(variable): prende in input una reference a un oggetto del tipo Variable e lo aggiunge al network (facendo tutti i controlli necessari e aggiornando i campi).
+- Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
+    - **name** è il nome della variabile;
+    - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);
+    - **parents** è un vettore che contiene gli ID dei genitori;
+    - **CPT** (*Conditional Probability Table*) è la tabella che contiene le probabilità condizionate dai valori assunti dai genitori.
+
+### Fase 2: parsing file BIF
+
+- ...
