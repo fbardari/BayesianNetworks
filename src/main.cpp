@@ -1,9 +1,11 @@
 #include <iostream>
 
 #include "Network.hpp"
+#include "Utilities.hpp"
 
-int main() {
-    // test: vedo se addVariable() è in grado di capire se un network è ciclico
+
+// test: vedo se addVariable() è in grado di capire se un network è ciclico
+void testCyclicNetwork() {
 
     Variable v1 = {
         "nome",
@@ -31,5 +33,37 @@ int main() {
         std::cerr << e.what() << '\n';
     }
 
-    // restituisce errore network ciclico come atteso
+    // deve restituire errore network ciclico come atteso
+
+}
+
+int main() {
+    Network network;
+
+    Variable v1 = {
+        "a",
+        {"true", "false"},
+        {},
+        {{0.5, 0.5}}
+    };
+
+    Variable v2 = {
+        "b",
+        {"true", "false"},
+        {0},
+        {{0.5, 0.5}, {0.6, 0.4}}
+    };
+
+    Variable v3 = {
+        "c",
+        {"true", "false"},
+        {0},
+        {{0.4, 0.6}, {0.5, 0.5}}
+    };
+
+    network.addVariable(v1);
+    network.addVariable(v2);
+    network.addVariable(v3);
+
+    std::cout << network.getTopologicalOrder();
 }

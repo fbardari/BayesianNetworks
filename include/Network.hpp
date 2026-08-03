@@ -37,7 +37,41 @@ public:
 aggiornando la mappa degli id e le liste di adiacenza */
 void addVariable(const Variable& variable);
 
-};
+// *** GETTER VARI ***
 
+// restituisce il numero di variabili del network
+inline int size() const {
+    return variables.size();
+}
+
+// getter per topologicalOrder
+inline const std::vector<int>& getTopologicalOrder() const {
+    return topologicalOrder;
+}
+
+// nome variabile -> nomi valori possibili
+inline const std::vector<std::string>& getValues(const std::string& variableName) const {
+    return variables[getVariableId(variableName)].values;
+}
+
+// nome variabile -> ID variabile
+inline int getVariableId(const std::string& name) const {
+        auto iterator = id.find(name);
+        if (iterator == id.end())
+            throw std::invalid_argument("Network::getVariableId: variabile \"" + name + "\" non trovata");
+        return iterator->second;
+}
+
+/*  overload dell'operatore []
+network[ID] restituisce una reference alla variabile con quell'ID  */ 
+inline const Variable& operator[](int variableId) const {
+    if (variableId >= 0 && variableId < variables.size()) {
+        return variables[variableId];
+    } else {
+        throw std::out_of_range("Network::operator[]: non c'è nessuna variabile con id = " + std::to_string(variableId));
+    }
+}
+
+};
 
 #endif

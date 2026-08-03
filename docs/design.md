@@ -24,16 +24,22 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 ## Stato di avanzamento
 
-- [ ] costruzione della classe Network a livello base
-- [ ] parsing file BIF
-- [ ] ordinamento topologico
-- [ ] calcolo probabilità congiunta
-- [ ] probabilità marginale (con enumerazione completa)
-- [ ] probabilità condizionale
-- [ ] variable elimination
+1. [ ] costruzione della classe Network a livello base
+2. [ ] parsing file BIF
+3. [ ] ordinamento topologico
+4. [ ] calcolo probabilità congiunta
+5. [ ] probabilità marginale (con enumerazione completa)
+6. [ ] probabilità condizionale
+7. [ ] variable elimination
+8. [ ] eventuale interfaccia utente
 
 ### Fase 1: strutture per rappresentare la rete bayesiana
 
+- Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
+    - **name** è il nome della variabile;
+    - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);
+    - **parents** è un vettore che contiene gli ID dei genitori;
+    - **CPT** (*Conditional Probability Table*) è la tabella che contiene le probabilità condizionate dai valori assunti dai genitori.
 - In questa prima fase costruisco la classe **Network** (*Network.hpp*, *Network.cpp*) a livello base, in particolare è dotata dei seguenti campi privati:
     - **variables**: vettore di elementi di tipo Variable che contiene tutte le variabili (i.e. i nodi) del network
     - la lista di adiacenza **adj**, costruita in modo che: adj[ID] contiene la lista dei figli di una variabile dato il suo ID;
@@ -42,11 +48,12 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 - e dei seguenti metodi:
     - **addVariable**(variable): prende in input una reference a un oggetto del tipo Variable e lo aggiunge al network (facendo tutti i controlli necessari e aggiornando i campi, incluso l'ordine topologico);
     - **updateTopologicalOrder**(): aggiorna l'ordine topologico (viene chiamato ogni volta che viene aggiunta una variabile) (-> inoltre è in grado di controllare se il network è ciclico, sollevando eventualmente un'eccezione).
-- Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
-    - **name** è il nome della variabile;
-    - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);
-    - **parents** è un vettore che contiene gli ID dei genitori;
-    - **CPT** (*Conditional Probability Table*) è la tabella che contiene le probabilità condizionate dai valori assunti dai genitori.
+- aggiungo in questa fase dei getter che potrebbero essere utili nelle fasi successive:
+    - network.**size**() restituisce il numero di variabili (nodi) del network;
+    - network.**getTopologicalOrder**() restituisce il vettore che contiene gli ID delle variabili in ordine topologico;
+    - network.**getValues**(variableName): nome variabile -> nomi valori possibili (es. *true/false*);
+    - network.**getVariableId**(name): nome variabile -> ID (in altre parole, accesso in sola lettura alla mappa **id**);
+    - **network\[variableId\]** = overload dell'operatore [] che restituisce una reference alla variabile con l'ID specificato.
 
 ### Fase 2: parsing file BIF
 
