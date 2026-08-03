@@ -9,6 +9,16 @@ void Network::addVariable(const Variable& variable) {
         throw std::invalid_argument("Esiste già una variabile con nome: " + variable.name);
     }
 
+    // eccezione se un genitore indicato non esiste nel network
+    for (int parentId : variable.parents) {
+        if (parentId < 0 || parentId >= variables.size()) {
+            throw std::invalid_argument(
+                "Network::addVariable: genitore con id " + std::to_string(parentId) +
+                " non esiste (variabile \"" + variable.name + "\")"
+            );
+        }
+    }
+
     // trovo id disponibile per nuova variabile
     int variableId = variables.size();
 
