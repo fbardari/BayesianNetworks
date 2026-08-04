@@ -30,13 +30,14 @@ int main() {
     Variable v4 = {
         "d",
         {"true", "false"},
-        {0},
-        {{0.4, 0.6}, {0.5, 0.5}}
+        {0,1},
+        {{0.4, 0.6}, {0.5, 0.5}, {0.4, 0.6}, {0.5, 0.5}}
     };
 
     Network network({v1, v2, v3, v4});
 
-    std::cout << network.getTopologicalOrder() << "\n";
-    std::cout << network.getChildren(1) << "\n";
-    std::cout << network.getValueIndex(1, "true");
+    std::cout << network.getCptRow(v4, {0,0,0,0}) << "\n";
+    std::cout << network.getCptRow(v4, {0,1,0,0}) << "\n";
+    std::cout << network.getCptRow(v4, {1,0,0,0}) << "\n";
+    std::cout << network.getCptRow(v4, {1,1,0,0}) << "\n";
 }
