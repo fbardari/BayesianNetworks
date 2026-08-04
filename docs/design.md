@@ -27,12 +27,12 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 1. [x] costruzione della classe Network a livello base
     - [ ] capacità di leggere le probabilità dalla CPT: *mi serve una funzione che data una variabile e un assignment completo (cioè assegno un valore a tutte le variabili, non solo ai genitori) mi dia la corrispondente riga in cui trovo la probabilità condizionale corretta*
 2. [x] ordinamento topologico
-3. [ ] parsing file BIF
+3. [ ] calcolo probabilità congiunta
+4. [ ] probabilità marginale (con enumerazione completa)
+5. [ ] probabilità condizionale
+6. [ ] parsing file BIF
     - [ ] deve essere capace di leggere i blocchi variable
     - [ ] e di popolare le tabelle CPT leggendo i blocchi probability
-4. [ ] calcolo probabilità congiunta
-5. [ ] probabilità marginale (con enumerazione completa)
-6. [ ] probabilità condizionale
 7. [ ] variable elimination
 8. [ ] eventuale interfaccia utente
 
