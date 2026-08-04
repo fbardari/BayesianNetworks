@@ -43,6 +43,14 @@ void addVariable(const Variable& variable);
 Network(); // crea rete vuota
 Network(const std::vector<Variable>& variables); // crea rete partendo da un vettore di variabili
 
+// *** CALCOLO PROBABILITÀ ***
+
+// configurazione completa (assignment) -> JOINT PROBABILITY
+double getJointProbability(const std::vector<int>& assignment) const;
+
+// (variabile, assignment COMPLETO) -> riga corrispondente tabella CPT
+int getCptRow(const Variable& variable, const std::vector<int>& assignment) const;
+
 // *** GETTER VARI ***
 
 // restituisce il numero di variabili del network

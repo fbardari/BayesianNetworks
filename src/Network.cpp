@@ -129,3 +129,20 @@ int Network::getValueIndex(int variableId, const std::string& valueName) const {
 
     throw std::invalid_argument("Network::getValueIndex: non c'è nessun valore di nome \"" + valueName + "\" per la variabile \"" + variables[variableId].name + "\"");
 }
+
+int Network::getCptRow(const Variable& variable, const std::vector<int>& assignment) const {
+    int row = 0; // riga
+    int mult = 1; // multiplier
+
+    /*  ciclo su tutti i genitori di variable
+        parto dall'ultimo (il valore cambia più velocemente) */
+    for (int i = variable.parents.size()-1; i>=0; i--) {
+        int parentId = variable.parents[i];
+        int assignedValueId = assignment[parentId];
+
+        row += assignedValueId * mult;
+        mult *= variables[parentId].values.size();
+    }
+
+    return row;
+}
