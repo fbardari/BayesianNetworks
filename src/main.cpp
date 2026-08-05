@@ -61,4 +61,8 @@ int main() {
     std::cout << network[network.getVariableId("d")].CPT << "\n\n";
     std::cout << network[network.getVariableId("e")].CPT << "\n\n";
 
+
+    std::cout << network.getMarginalProbability("e", "false") << "\n";
+    std::cout << network.getMarginalProbability("e", "true");
+
 }

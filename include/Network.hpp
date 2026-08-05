@@ -32,6 +32,9 @@ std::vector<int> topologicalOrder;
 // aggiorna il vettore topologicalOrder
 void updateTopologicalOrder();
 
+// funzione ricorsiva utilizzata in getMarginalProbability()
+double marginalRecursive(int variableId, std::vector<int>& assignment) const;
+
 public:
 
 /* aggiunge un oggetto del tipo variabile al network,
@@ -53,6 +56,9 @@ int getCptRow(const Variable& variable, const std::vector<int>& assignment) cons
 
 // (ID variabile, assignment COMPLETO) -> riga corrispondente tabella CPT
 int getCptRow(int variableId, const std::vector<int>& assignment) const;
+
+// (nome variabile, nome del valore assegnato) -> MARGINAL PROBABILITY
+double getMarginalProbability(const std::string& variableName, const std::string& valueName) const;
 
 // *** GETTER VARI ***
 

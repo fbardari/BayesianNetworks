@@ -32,8 +32,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 3. [ ] calcolo probabilità congiunta e marginale
     - [x] costruire la funzione `network.getJointProbability(assignment)` che calcola la probabilità di una configurazione completa
     - [ ] generare tutte le configurazioni delle variabili rilevanti per la variabile considerata
-    - [ ] sommare solo su quelle in cui la variabile assume il valore fissato a priori -> probabilità congiunta
-3. [ ] probabilità marginale (con enumerazione completa)
+    - [ ] sommare solo su quelle in cui la variabile assume il valore fissato a priori
 4. [ ] probabilità condizionale
 5. [ ] parsing file BIF
     - [ ] deve essere capace di leggere i blocchi variable
@@ -68,10 +67,23 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - network.**getValueIndex**(variableId, valueName): (ID variabile, nome valore) -> ID valore (per esempio "true" = 0, "false" = 1 ...);
     - **network\[variableId\]** = overload dell'operatore [] che restituisce una reference alla variabile con l'ID specificato.
 
-### Fase 2: parsing file BIF
+### Fase 2: calcolo della probabilità marginale (enumerazione completa)
+
+- Abbiamo adesso le strutture per rappresentare il network e le CPT.
+- Abbiamo una funzione (**getJointProbability**) che dato un assignment completo ci da la probabilità congiunta di quella specifica configuazione (es. *p(a=false, b=true, c=true...)*)
+- Adesso dobbiamo creare la funzione che marginalizza la probabilità (es. *p(b=true)*) per **enumerazione completa**, cioè calcolando la probabilità (congiunte) di tutte le configurazioni complete *rilevanti* (cioè, per esempio, in cui *b=true*) e sommandole.
+- La probabilità marginale sarà calcolata dalla funzione **getMarginalProbability** che prende in input due stringhe: il nome di una variabile target e il nome del suo valore (es. `getMarginalProbability("b", "true")`).
+    - **getMarginalProbability** trova innanzitutto l'ID della variabile target e del valore assegnato
+    - crea un array assignment che è inizializzato tutto ad un valore dummy (-1) tranne per l'elemento corrispondente alla variabile target, che inizializzato al valore assegnato (es. true)
+    - a questo punto viene chiamata la funzione ricorsiva **marginalRecursive** che prende in input l'ID di una variabile da processare e un assignment completo
+- **Funzionamento di marginalRecursive()**: distinguendo i vari casi
+    - se abbiamo processato l'ultima variabile (ID variabile da processare = network size) -> restituisce la joint probability;
+    - se la variabile è stata già processata (assignment[id] != -1) -> chiama l'algoritmo ricorsivo per la variabile successiva "id+1";
+    - altrimenti (la variabile non ha ancora un valore, ovvero assignment[id] = -1):
+        - inizializza probabilità a 0.0;
+        - itera su tutti i possibili valori che la variabile corrente può assumere, assegna il valore corrente a assignment[id], fa chiamata ricorsiva per la variabile successiva e somma il risultato alla probabilità
+[TODO: spiegare meglio]
+
+### Fase 3: parsing file BIF
 
 - In generale, il modulo Parser deve contenere una funzione del tipo **importBIF(filePath)** che dato il pecorso di un file BIF restituisce l'oggetto di tipo Network costruito secondo i dati trovati nel file.
-
-### Fase 3: calcolo delle probabilità
-
-- ...
