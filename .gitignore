@@ -1,3 +1,6 @@
+# BIF files
+data/
+
 # Build directories
 build/
 Build/
