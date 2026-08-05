@@ -16,6 +16,8 @@ int main() {
 
 
     std::cout << network.getMarginalProbability("e", "false") << "\n";
-    std::cout << network.getMarginalProbability("e", "true");
+    std::cout << network.getMarginalProbability("e", "true") << "\n";
 
+
+    std::cout << Test::normalized(network);
 }

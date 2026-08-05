@@ -1,5 +1,10 @@
 #include "Test.hpp"
 
+#include <limits>
+#include <vector>
+#include <string>
+#include <cmath>
+
 
 Network Test::exampleNetwork() {
 
@@ -59,5 +64,23 @@ Network Test::exampleNetwork() {
 
 
 bool Test::normalized(Network& network) {
-    return false; // DA IMPLEMENTARE
+    // machine epsilon
+    constexpr double eps = std::numeric_limits<double>::epsilon();
+
+    for (int i = 0; i < network.size(); i++) {
+        double sum = 0.0;
+
+        const Variable& variable = network[i];
+
+        for (const auto& value : variable.values) {
+            sum += network.getMarginalProbability(variable.name, value);
+        }
+
+        if (std::abs(sum - 1) > eps) {
+            return false;
+        }
+    }
+
+    return true;
+    
 }

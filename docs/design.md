@@ -84,6 +84,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
         - inizializza probabilità a 0.0;
         - itera su tutti i possibili valori che la variabile corrente può assumere, assegna il valore corrente a assignment[id], fa chiamata ricorsiva per la variabile successiva e somma il risultato alla probabilità
 [TODO: spiegare meglio]
+- Fatto un test per controllare che le probabilità marginali siano correttamente normalizzate (si veda **Test::marginal()**).
 
 ### Fase 3: parsing file BIF
 
