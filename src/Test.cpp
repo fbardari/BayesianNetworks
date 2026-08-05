@@ -67,20 +67,25 @@ bool Test::normalized(Network& network) {
     // machine epsilon
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
-    for (int i = 0; i < network.size(); i++) {
+    for (int i = 0; i < network.size(); i++) { // ciclo su tutte le variabili
         double sum = 0.0;
 
         const Variable& variable = network[i];
 
+        // ciclo sui valori possibili di una variabile
         for (const auto& value : variable.values) {
             sum += network.getMarginalProbability(variable.name, value);
         }
 
         if (std::abs(sum - 1) > eps) {
+            /*
+            restituisci false se anche solo una delle variabili
+            ci da una probabilità marginale non normalizzata
+            */
             return false;
         }
     }
 
-    return true;
+    return true; // altrimenti true
     
 }
