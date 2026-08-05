@@ -17,6 +17,7 @@ Il progetto è suddiviso nei seguenti moduli:
     - conserva le variabili della rete (rappresentate dalla struct **Variable** definita nel file *Variable.hpp*), le liste di adiacenza e l'ordinamento topologico;
     - contiene i getter per il calcolo delle probabilità marginali e condizionali.
 - **Utilities**: funzioni di supporto generiche (es. stampa di vettori)
+- **Test**: un namespace che contiene varie funzioni di test (es. check normalizzazione)
 
 Estensioni / moduli aggiuntivi (da valutare più avanti):
 
