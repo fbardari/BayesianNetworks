@@ -77,14 +77,16 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - **getMarginalProbability** trova innanzitutto l'ID della variabile target e del valore assegnato
     - crea un array assignment che è inizializzato tutto ad un valore dummy (-1) tranne per l'elemento corrispondente alla variabile target, che inizializzato al valore assegnato (es. true)
     - a questo punto viene chiamata la funzione ricorsiva **marginalRecursive** che prende in input l'ID di una variabile da processare e un assignment completo
-- **Funzionamento di marginalRecursive()**: distinguendo i vari casi
-    - se abbiamo processato l'ultima variabile (ID variabile da processare = network size) -> restituisce la joint probability;
-    - se la variabile è stata già processata (assignment[id] != -1) -> chiama l'algoritmo ricorsivo per la variabile successiva "id+1";
-    - altrimenti (la variabile non ha ancora un valore, ovvero assignment[id] = -1):
-        - inizializza probabilità a 0.0;
-        - itera su tutti i possibili valori che la variabile corrente può assumere, assegna il valore corrente a assignment[id], fa chiamata ricorsiva per la variabile successiva e somma il risultato alla probabilità
-[TODO: spiegare meglio]
 - Fatto un test per controllare che le probabilità marginali siano correttamente normalizzate (si veda **Test::marginal()**).
+
+#### Funzionamento dell'algoritmo ricorsivo di marginalizzazione
+- Stato iniziale: viene creato un vettore assignment inizializzato a -1 (ad eccezione della variabile target). La ricorsione parte dalla variabile con id=0.
+    - Caso id=n -> il vettore assignment è completo, restituiamo la probabilità congiunta di quella specifica combinazione.
+    - Caso assigment[id] != -1 -> quella variabile è l'evidenza oppure il valore è già fissato, saltiamo e chiamiamo ricorsivamente la funzione per la variabile "id+1"
+    - Caso assigment[id] == -1 -> ciclo sui possibili valori che la variabile può assumere, sommando tutte le probabilità (per i diversi valori delle altre variabili) chiamando ricorsivamente la funzione.
+- **Nota sulla complessità computazionale dell'algoritmo**:
+    - *punto di debolezza*: la complessità temporale è esponenziale, per ognuna delle n variabili l'algoritmo deve esplorare K^(n-1) configurazioni -> complessità o(n * K^n) (dove K è il numero di valori possibili)
+    - *punto di forza*: basso consumo di memoria, infatti l'algoritmo riutilizza lo stesso vettore di assignment, passato nelle chiamate ricorsive per riferimento: la memoria è occupata unicamente da questo vettore e dalla probabilità, generando una complessità spaziale lineare o(n).
 
 ### Fase 3: parsing file BIF
 
