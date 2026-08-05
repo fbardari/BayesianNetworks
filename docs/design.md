@@ -29,10 +29,10 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
         - **Funzionamento di getCptRow()**: prende gli index dei valori scelti da ciascun genitore, li moltiplica per pesi crescenti in base al numero di opzioni disponibili e somma per trovare la riga esatta (nella tabella CPT le righe sono ordinate in modo che l'ultimo genitore abbia il valore che varia più velocemente)
         - input: (variabile, assignment) oppure (ID variabile, assignment)
 2. [x] ordinamento topologico
-3. [ ] calcolo probabilità congiunta e marginale
+3. [x] calcolo probabilità congiunta e marginale
     - [x] costruire la funzione `network.getJointProbability(assignment)` che calcola la probabilità di una configurazione completa
-    - [ ] generare tutte le configurazioni delle variabili rilevanti per la variabile considerata
-    - [ ] sommare solo su quelle in cui la variabile assume il valore fissato a priori
+    - [x] generare tutte le configurazioni delle variabili rilevanti per la variabile considerata
+    - [x] sommare solo su quelle in cui la variabile assume il valore fissato a priori
 4. [ ] probabilità condizionale
 5. [ ] parsing file BIF
     - [ ] deve essere capace di leggere i blocchi variable
