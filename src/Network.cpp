@@ -146,3 +146,7 @@ int Network::getCptRow(const Variable& variable, const std::vector<int>& assignm
 
     return row;
 }
+
+int Network::getCptRow(int variableId, const std::vector<int>& assignment) const {
+    return getCptRow(this->variables[variableId], assignment);
+}

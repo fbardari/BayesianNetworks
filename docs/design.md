@@ -25,8 +25,9 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 ## Stato di avanzamento
 
 1. [x] costruzione della classe Network a livello base
-    - [x] capacità di leggere le probabilità dalla CPT: *mi serve una funzione che data una variabile e un assignment completo (cioè assegno un valore a tutte le variabili, non solo ai genitori) mi dia la corrispondente riga in cui trovo la probabilità condizionale corretta* -> fatto: implementato il metodo `network.getCptRow(variable, assignment)` che calcola l'**indice di riga della matrice CPT** *dato un assignment set dei genitori* di una certa variabile
+    - [x] capacità di leggere le probabilità dalla CPT: -> fatto: implementato il metodo network.**getCptRow**(variable, assignment) che calcola l'**indice di riga della matrice CPT** *dato un assignment set COMPLETO dei genitori* di una certa variabile
         - **Funzionamento di getCptRow()**: prende gli index dei valori scelti da ciascun genitore, li moltiplica per pesi crescenti in base al numero di opzioni disponibili e somma per trovare la riga esatta (nella tabella CPT le righe sono ordinate in modo che l'ultimo genitore abbia il valore che varia più velocemente)
+        - input: (variabile, assignment) oppure (ID variabile, assignment)
 2. [x] ordinamento topologico
 3. [ ] calcolo probabilità congiunta e marginale
     - [x] costruire la funzione `network.getJointProbability(assignment)` che calcola la probabilità di una configurazione completa

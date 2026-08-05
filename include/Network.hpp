@@ -51,6 +51,9 @@ double getJointProbability(const std::vector<int>& assignment) const;
 // (variabile, assignment COMPLETO) -> riga corrispondente tabella CPT
 int getCptRow(const Variable& variable, const std::vector<int>& assignment) const;
 
+// (ID variabile, assignment COMPLETO) -> riga corrispondente tabella CPT
+int getCptRow(int variableId, const std::vector<int>& assignment) const;
+
 // *** GETTER VARI ***
 
 // restituisce il numero di variabili del network
