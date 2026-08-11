@@ -109,6 +109,5 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 ...
 
-### Fase 5: variable elimination
-
+### Fase 5: variable elimination
 ...
