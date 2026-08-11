@@ -19,6 +19,9 @@ std::ifstream file;
 std::unordered_map<std::string, int> id;
 std::vector<Variable> variables;
 
+// stringa letta nel file
+std::string s;
+
 void parseNetwork();
 void parseVariable();
 void parseProbability();

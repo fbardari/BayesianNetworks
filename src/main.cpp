@@ -3,6 +3,7 @@
 #include "Network.hpp"
 #include "Utilities.hpp"
 #include "Test.hpp"
+#include "Parser.hpp"
 
 
 int main() {
@@ -16,4 +17,7 @@ int main() {
 
 
     std::cout << Test::normalized(network);
+
+
+    Parser::importBIF("./data/gradient.bif", true);
 }
