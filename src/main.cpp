@@ -22,5 +22,9 @@ int main() {
     Network importedNetwork = Parser::importBIF("./data/gradient.bif", true);
 
     std::cout << importedNetwork.getVariableId("a") << "\n";
-    std::cout << network.getValues("b");
+    std::cout << importedNetwork.getValues("b") << "\n";
+    std::cout << importedNetwork.getChildren(0) << "\n";
+
+    std::cout << importedNetwork.getTopologicalOrder() << "\n";
+    std::cout << network.getTopologicalOrder();
 }
