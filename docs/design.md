@@ -67,6 +67,7 @@ Sono implementate nel file `Network_probability.cpp`.
     - [x] costruire la funzione `network.getJointProbability(assignment)` che calcola la probabilità di una configurazione completa
     - [x] generare tutte le configurazioni delle variabili rilevanti per la variabile considerata
     - [x] sommare solo su quelle in cui la variabile assume il valore fissato a priori
+    - [ ] **DA MODIFICARE**: attualmente, nel calcolo della probabilità marginale per enumerazione completa sto calcolando tutte le configurazioni complete -> devo invece generare solo le configurazioni delle variabili da cui la variabile target dipende!
 4. [x] parsing file BIF
     - [x] deve essere capace di leggere i blocchi variable
     - [x] e di popolare le tabelle CPT leggendo i blocchi probability
