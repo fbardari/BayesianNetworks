@@ -85,5 +85,50 @@ void Parser::parseVariable() {
 }
 
 void Parser::parseProbability() {
-    if (log) std::cout << "Parser::parseProbability: letto token \'" << s << "\'\n";
+    while (file >> s) { // vado avanti finché non trovo il nome della variabile
+        cleanString();
+        if (s != "") break;
+    }
+
+    std::string childName = s; // salvo nome variabile figlio
+    int childId = id[childName]; // recupero il suo ID
+
+    if (log) std::cout << "Parser::parseProbability: trovata variabile figlio \'" << childName << "\'\n";
+    
+
+    while (file >> s) {
+        /*
+        vado avanti finché non capisco se ci sono genitori o no
+        se ci sono -> salvo i loro ID in variables[].parents
+        */
+
+        if (s == "|") { // ci sono genitori
+            if (log) std::cout << ", ha genitori:";
+
+            while(file >> s && s != "{" && s!= ")") { // ciclo su tutti i genitori
+                cleanString();
+                if (s == "") continue;
+                
+                // salvo nome genitore
+                std::string parentName = s;
+                int parentId = id[parentName];
+
+                // log nome genitore
+                if (log) std::cout << " " << parentName;
+
+                // salvo id genitore in variables[].parents
+                variables[childId].parents.push_back(parentId);
+            }
+
+            if (log) std::cout << std::endl;
+            break; // vado avanti a leggere la CPT
+        } else { // no genitori
+            if (log) std::cout << ", non ha genitori\n";
+            break; // vado avanti a leggere la CPT
+        }
+    }
+
+    // ora leggo tabella CPT
+
+    // TODO: IMPLEMENTARE
 }
