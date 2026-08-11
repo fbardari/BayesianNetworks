@@ -23,6 +23,39 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 - **Elimination**: implementerà eventualmente l'algoritmo di variable elimination per il calcolo delle probabilità (più efficiente dell'enumerazione completa).
 
+## Descrizione dettagliata dei moduli
+
+### Variable.hpp
+
+La struct **`Variable`** rappresenta i singoli nodi (variabili casuali discrete) che costituiscono la rete bayesiana:
+- `name`: nome della variabile;
+- `values`: vector che contiene i valori (cioè gli stati discreti) che la variabile casuale può assumere (es. `["true", "false"]`);
+- `parents`: vector che contiene gli ID dei genitori della variabile;
+- `CPT`: tabella delle probabilità condizionate (*Conditional Probability Table*), memorizzata come matrice di valori di tipo `double`.
+
+### Network.hpp
+
+La classe **`Network`** rappresenta la rete bayesiana e fornisce le funzioni per i calcoli delle probabilità marginali e congiunte.
+
+#### Stato interno
+
+- `variables`: vettore che contiene le variabili della rete (ordinate secondo gli ID assegnati);
+- `adj`: liste di adiacenza che tracciano i figli di ogni variabile (cioè `adj[i]` contiene la lista dei figli della variabile con ID uguale ad i);
+- `id`: mappa che permette di trovare l'ID di una variabile dato il suo nome (es. `id['c']` -> 3);
+- `topologicalOrder`: contiene gli ID delle variabili ordinate secondo l'ordine topologico.
+
+#### Funzioni per il calcolo delle probabilità
+
+Sono implementate nel file `Network_probability.cpp`.
+
+- `getJointProbability()`: calcola la probabilità congiunta data una configurazione completa di assegnamento;
+- `getMarginalProbability()`: calcola la probabilità marginale di una specifica variabile e valore assegnato, per enumerazione completa;
+- `getCptRow()`: calcola l'indice della riga della tabella CPT corrispondente a un dato assegnamento.
+
+#### Altre funzioni
+
+- ...
+
 ## Stato di avanzamento
 
 1. [x] costruzione della classe Network a livello base
