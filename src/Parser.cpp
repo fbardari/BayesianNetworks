@@ -25,7 +25,9 @@ Network Parser::parse() {
     if (!file.is_open()) throw std::runtime_error("Parser::parse: impossibile aprire il file");
 
     while (file >> s) {
-        if (log) std::cout << "Parser::parse: loop principale, letto token " << s << "\n";
+        cleanString();
+
+        if (log) std::cout << "Parser::parse: loop principale, letto token \'" << s << "\'\n";
 
         if (s == "network") parseNetwork();
         else if (s == "variable") parseVariable();
@@ -36,13 +38,47 @@ Network Parser::parse() {
 }
 
 void Parser::parseNetwork() {
-    if (log) std::cout << "Parser::parseNetwork: letto token" << s << "\n";
+    while (file >> s) {
+        cleanString();
+        if (s.empty()) break;
+        if (log) std::cout << "Parser::parseNetwork: letto token \'" << s << "\'\n";
+    }
 }
 
 void Parser::parseVariable() {
-    if (log) std::cout << "Parser::parseVariable: letto token" << s << "\n";
+    file >> s; // leggo nome variabile
+    cleanString();
+
+    std::string variableName = s; // salvo nome variabile
+    int variableId = variables.size(); // assegno ID disponibile
+    id[variableName] = variableId;
+
+    // creo nuovo oggetto di tipo Variable
+    Variable newVariable = {
+        variableName, // nome nuova variabile
+        {}, // values
+        {}, // parents id
+        {} // cpt vuota, verrà riempita dopo da parseProbability()...
+    };
+
+    if (log) std::cout << "Parser::parseVariable: trovata variabile \'" << variableName << "\', assegnato ID=" << variableId << "\n";
+
+    while(file >> s && s != "{");
+    while(file >> s && s != "{"); // aspetto la seconda "{" per la lista variabili
+
+    std::string value;
+    while (file >> s && s != "};") {
+        cleanString();
+        value = s;
+        if (log) std::cout << "Parser::parseVariable: trovato valore \'" << value << "\'\n";
+
+        newVariable.values.push_back(value);
+    }
+
+    // aggiungo nuova variabile a variables
+    variables.push_back(newVariable);
 }
 
 void Parser::parseProbability() {
-    if (log) std::cout << "Parser::parseProbability: letto token" << s << "\n";
+    if (log) std::cout << "Parser::parseProbability: letto token \'" << s << "\'\n";
 }
