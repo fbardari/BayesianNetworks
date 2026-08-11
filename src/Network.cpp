@@ -121,10 +121,7 @@ int Network::getVariableId(const std::string& name) const {
 }
 
 int Network::getValueIndex(int variableId, const std::string& valueName) const {
-    if (variableId < 0 || variableId >= size()) {
-        throw std::out_of_range("Network::getValueIndex: id variabile non valido (" + std::to_string(variableId) + ")");
-    }
-    const Variable& variable = variables[variableId];
+    const Variable& variable = (*this)[variableId];
 
     for (int i = 0; i < variable.values.size(); i++) {
         if (variable.values[i] == valueName) return i;
