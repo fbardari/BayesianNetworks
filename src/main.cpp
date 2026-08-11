@@ -7,29 +7,7 @@
 
 
 int main() {
-    Network network = Test::exampleNetwork();
+    Network importedNetwork = Parser::importBIF("./data/asia.bif", false);
 
-    std::cout << network[network.getVariableId("a")].CPT << "\n\n";
-    std::cout << network[network.getVariableId("b")].CPT << "\n\n";
-    std::cout << network[network.getVariableId("c")].CPT << "\n\n";
-    std::cout << network[network.getVariableId("d")].CPT << "\n\n";
-    std::cout << network[network.getVariableId("e")].CPT << "\n\n";
-
-
-    std::cout << Test::normalized(network);
-
-
-    Network importedNetwork = Parser::importBIF("./data/gradient.bif", true);
-
-    std::cout << importedNetwork.getVariableId("a") << "\n";
-    std::cout << importedNetwork.getValues("b") << "\n";
-    std::cout << importedNetwork.getChildren(0) << "\n";
-
-    std::cout << importedNetwork.getTopologicalOrder() << "\n";
-    std::cout << network.getTopologicalOrder() << "\n";
-
-    std::cout << Test::normalized(importedNetwork) << "\n\n";
-
-    std::cout << network.getMarginalProbability("e", "true") << "\n";
-    std::cout << importedNetwork.getMarginalProbability("e", "true");
+    std::cout << Test::normalized(importedNetwork);
 }
