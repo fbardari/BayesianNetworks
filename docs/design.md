@@ -92,6 +92,18 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 - In generale, il modulo Parser deve contenere una funzione del tipo **importBIF(filePath)** che dato il pecorso di un file BIF restituisce l'oggetto di tipo Network costruito secondo i dati trovati nel file.
 
+- Implementerò una classe **Parser** che contiene nel suo stato interno:
+    - la stringa **filename** (percorso del file bif importato);
+    - l'oggetto di tipo *fstream* di nome **file**;
+    - la mappa id (che associa nome -> id) e il vettore variables, che contiene le variabili che andranno a costruire il network;
+    - la variabile booleana "**log**" che, quando è settata su true, fa stampare a schermo i log del parsing.
+- Il costruttore prenderà in input il nome del file e il valore di log.
+- Il metodo **parse()** costruisce e restituisce il Network che si trova al file specificato da filename
+    - utilizzerà tre funzioni helper di tipo void che effettueranno il parsing dei 3 blocchi presenti nei files BIF: network, variables, probability;
+    - riempirà opportunamente la mappa **id** e l'array **variables**
+    - salverà i risultati in un oggetto di tipo Network e lo restituirà in output.
+- Il metodo *static* **importBIF()** permetterà di ottenere automaticamente il Network senza dover costruire manualmente l'istanza della classe.
+
 ### Fase 4: probabilità condizionale
 
 ...
