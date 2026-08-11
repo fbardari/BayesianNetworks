@@ -32,6 +32,16 @@ void parseNetwork();
 void parseVariable();
 void parseProbability();
 
+/*
+prende in input (variabile child, tutte le altre variabili, assignment PARZIALE)
+-> restituisce riga della tabella CPT in cui devo memorizzare l'assignment
+*/
+static int getCptRow(
+    const Variable& variable,
+    const std::vector<Variable>& allVariables,
+    const std::unordered_map<int, int>& partialAssignment
+);
+
 public:
 
 Parser(const std::string& filename, bool log); // constructor

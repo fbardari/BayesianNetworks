@@ -107,7 +107,7 @@ void Parser::parseProbability() {
 
             while(file >> s && s != "{" && s!= ")") { // ciclo su tutti i genitori
                 cleanString();
-                if (s == "") continue;
+                if (s.empty()) continue;
                 
                 // salvo nome genitore
                 std::string parentName = s;
@@ -128,7 +128,132 @@ void Parser::parseProbability() {
         }
     }
 
-    // ora leggo tabella CPT
 
-    // TODO: IMPLEMENTARE
+    // ora leggo la CPT
+
+    int numParents = variables[childId].parents.size();
+    int numValues = variables[childId].values.size();
+
+    // ricavo numero righe da leggere
+    int numRows = 1;
+    for (int parentId : variables[childId].parents) numRows *= variables[parentId].values.size();
+
+    // riservo lo spazio corretto nella CPT
+    variables[childId].CPT.assign(numRows, std::vector<double>());
+
+    while (file >> s) {
+        cleanString();
+        if (s.empty()) continue;
+
+        if (s == "table") { // caso senza genitori
+            if (log) std::cout << "Parser::parseProbability: salvate probabilità";
+            while (file >> s && s != "}") {
+                cleanString();
+
+                // salta eventuali stringhe non numeriche
+                if (s.empty()) continue;
+
+                // salvo probabilità
+                double prob = std::stod(s);
+                variables[childId].CPT[0].push_back(prob);
+                if (log) std::cout << " " << prob;
+            }
+            if (log) std::cout << "\n";
+            break;
+        } else { // caso con genitori
+
+            if (log) std::cout << "Parser::parseProbability: numParents=" << numParents << ", numValues=" << numValues << std::endl;
+
+            // ciclo su ogni riga
+            for (int row=0; row < numRows; row++) {
+                std::unordered_map<int, int> partialAssignment;
+
+                if (log) std::cout << "Parser::parseProbability: leggo riga " << row << std::endl;
+
+                if (log) std::cout << "       leggo valori ";
+
+                // ciclo su ogni valore della riga
+                for (int i=0; i < numParents; i++) {
+                    cleanString();
+                    while(s.empty()) {
+                        file >> s;
+                        cleanString();
+                    }
+
+                    std::string valueName = s;
+                    int parentId = variables[childId].parents[i];
+
+                    int valueId = -1;
+                    for (int v=0; v < variables[parentId].values.size(); v++) {
+                        if (variables[parentId].values[v] == valueName) {
+                            valueId = v;
+                            break;
+                        }
+                    }
+                    partialAssignment[parentId] = valueId;
+
+                    if (log) std::cout << " " << valueName << "(parentId=" << valueId << ",valueId=" << valueId << ")";
+
+                    file >> s;
+                }
+                if (log) std::cout << std::endl;
+
+                // trova riga in cui inserire le probabilità
+                int cptRow = Parser::getCptRow(variables[childId], variables, partialAssignment);
+
+                if (log) std::cout << "       leggo probabilita ";
+
+                // ciclo su ogni probabilità della riga
+                for (int i=0; i < numValues; i++) {
+                    cleanString();
+                    while (s.empty()) {
+                        file >> s;
+                        cleanString();
+                    }
+
+                    double prob = std::stod(s);
+
+                    if (log) std::cout << " " << prob;
+
+                    // inserisco probabilità nella tabella
+                    variables[childId].CPT[cptRow].push_back(prob);
+
+                    file >> s;
+                    
+                }
+                if (log) std::cout << std::endl;
+            }
+
+            break;
+        }
+
+    }
+        
+    return;
+}
+
+
+int Parser::getCptRow(
+    const Variable& variable,
+    const std::vector<Variable>& allVariables,
+    const std::unordered_map<int, int>& partialAssignment
+) {
+    int row = 0; // riga
+    int mult = 1; // multiplier
+
+    /*  ciclo su tutti i genitori di variable
+        parto dall'ultimo (il valore cambia più velocemente) */
+    for (int i = variable.parents.size()-1; i>=0; i--) {
+        int parentId = variable.parents[i];
+
+        auto iter = partialAssignment.find(parentId);
+
+        if (iter == partialAssignment.end()) throw std::runtime_error("Parser::getCptRow: genitore mancante");
+
+        int assignedValueId = iter->second;
+        row += assignedValueId * mult;
+        mult *= allVariables[parentId].values.size();
+    }
+
+    return row;
 }

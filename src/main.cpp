@@ -26,5 +26,10 @@ int main() {
     std::cout << importedNetwork.getChildren(0) << "\n";
 
     std::cout << importedNetwork.getTopologicalOrder() << "\n";
-    std::cout << network.getTopologicalOrder();
+    std::cout << network.getTopologicalOrder() << "\n";
+
+    std::cout << Test::normalized(importedNetwork) << "\n\n";
+
+    std::cout << network.getMarginalProbability("e", "true") << "\n";
+    std::cout << importedNetwork.getMarginalProbability("e", "true");
 }

@@ -35,9 +35,10 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
     - [x] generare tutte le configurazioni delle variabili rilevanti per la variabile considerata
     - [x] sommare solo su quelle in cui la variabile assume il valore fissato a priori
 4. [ ] probabilità condizionale
-5. [ ] parsing file BIF
-    - [ ] deve essere capace di leggere i blocchi variable
-    - [ ] e di popolare le tabelle CPT leggendo i blocchi probability
+5. [x] parsing file BIF
+    - [x] deve essere capace di leggere i blocchi variable
+    - [x] e di popolare le tabelle CPT leggendo i blocchi probability
+    - [ ] TODO: ottimizzare firma della funzione helper **Parser::getCptRow()**, non necessario che sia static, non necessario passaggio per riferimento
 6. [ ] variable elimination
 7. [ ] eventuale interfaccia utente
 
