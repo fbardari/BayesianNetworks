@@ -19,5 +19,8 @@ int main() {
     std::cout << Test::normalized(network);
 
 
-    Parser::importBIF("./data/gradient.bif", true);
+    Network importedNetwork = Parser::importBIF("./data/gradient.bif", true);
+
+    std::cout << importedNetwork.getVariableId("a") << "\n";
+    std::cout << network.getValues("b");
 }

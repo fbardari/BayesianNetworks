@@ -35,6 +35,10 @@ Network Parser::parse() {
 
     }
 
+    Network result(variables);
+
+    if(log) std::cout << "Parser::parse: loop principale, lettura file completata\n";
+    return result;
 }
 
 void Parser::parseNetwork() {
