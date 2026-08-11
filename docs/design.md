@@ -29,7 +29,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 La struct **`Variable`** rappresenta i singoli nodi (variabili casuali discrete) che costituiscono la rete bayesiana:
 - `name`: nome della variabile;
-- `values`: vector che contiene i valori (cioè gli stati discreti) che la variabile casuale può assumere (es. `["true", "false"]`);
+- `values`: vector che contiene i nomi dei valori (cioè gli stati discreti) che la variabile casuale può assumere (es. `["true", "false"]`);
 - `parents`: vector che contiene gli ID dei genitori della variabile;
 - `CPT`: tabella delle probabilità condizionate (*Conditional Probability Table*), memorizzata come matrice di valori di tipo `double`.
 
