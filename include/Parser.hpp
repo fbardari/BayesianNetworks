@@ -12,12 +12,12 @@ class Parser {
 
 private:
 
-std::string filename;
-bool log;
-std::ifstream file;
+std::string filename; // percorso del file BIF
+bool log; // fare o non fare print dei log durante il parsing
+std::ifstream file; // file stream
 
-std::unordered_map<std::string, int> id;
-std::vector<Variable> variables;
+std::unordered_map<std::string, int> id; // mappa nome variabili -> ID assegnato
+std::vector<Variable> variables; // variabili che costituiranno il network
 
 // stringa letta nel file
 std::string s;

@@ -29,6 +29,7 @@ Network Parser::parse() {
 
         if (log) std::cout << "Parser::parse: loop principale, letto token \'" << s << "\'\n";
 
+        // avvia il ciclo corrispondende ad ognuno dei tre tipi di blocchi
         if (s == "network") parseNetwork();
         else if (s == "variable") parseVariable();
         else if (s == "probability") parseProbability();
