@@ -199,7 +199,7 @@ void Parser::parseProbability() {
                 if (log) std::cout << std::endl;
 
                 // trova riga in cui inserire le probabilità
-                int cptRow = Parser::getCptRow(variables[childId], variables, partialAssignment);
+                int cptRow = Parser::getCptRow(childId, partialAssignment);
 
                 if (log) std::cout << "       leggo probabilita ";
 
@@ -234,17 +234,16 @@ void Parser::parseProbability() {
 
 
 int Parser::getCptRow(
-    const Variable& variable,
-    const std::vector<Variable>& allVariables,
+    int childId,
     const std::unordered_map<int, int>& partialAssignment
 ) {
     int row = 0; // riga
     int mult = 1; // multiplier
 
-    /*  ciclo su tutti i genitori di variable
+    /*  ciclo su tutti i genitori della variabile child
         parto dall'ultimo (il valore cambia più velocemente) */
-    for (int i = variable.parents.size()-1; i>=0; i--) {
-        int parentId = variable.parents[i];
+    for (int i = variables[childId].parents.size()-1; i>=0; i--) {
+        int parentId = variables[childId].parents[i];
 
         auto iter = partialAssignment.find(parentId);
 
@@ -252,7 +251,7 @@ int Parser::getCptRow(
 
         int assignedValueId = iter->second;
         row += assignedValueId * mult;
-        mult *= allVariables[parentId].values.size();
+        mult *= variables[parentId].values.size();
     }
 
     return row;
