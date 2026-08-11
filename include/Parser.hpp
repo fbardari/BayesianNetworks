@@ -22,16 +22,23 @@ std::vector<Variable> variables;
 // stringa letta nel file
 std::string s;
 
+/* pulisce la string "s"
+    rimuovendo i caratteri presenti nei file BIF
+    che non contengono dati */ 
+void cleanString();
+
+// parsing dei blocchi di un file BIF
 void parseNetwork();
 void parseVariable();
 void parseProbability();
 
 public:
 
-Parser(const std::string& filename, bool log);
+Parser(const std::string& filename, bool log); // constructor
 
-Network parse();
+Network parse(); // avvia il parsing
 
+// restituisce il Network dato un file BIF
 static Network importBIF(const std::string& filename, bool log);
 
 };

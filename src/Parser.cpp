@@ -3,6 +3,12 @@
 #include <stdexcept>
 #include <iostream>
 
+void Parser::cleanString() {
+    for (char c : ",;()[]{}\"") {
+        s.erase(remove(s.begin(), s.end(), c), s.end());
+    }
+}
+
 Parser::Parser (const std::string& filename, bool log)
     : filename(filename), log(log) {}
 
@@ -30,13 +36,13 @@ Network Parser::parse() {
 }
 
 void Parser::parseNetwork() {
-
+    if (log) std::cout << "Parser::parseNetwork: letto token" << s << "\n";
 }
 
 void Parser::parseVariable() {
-
+    if (log) std::cout << "Parser::parseVariable: letto token" << s << "\n";
 }
 
 void Parser::parseProbability() {
-
+    if (log) std::cout << "Parser::parseProbability: letto token" << s << "\n";
 }
