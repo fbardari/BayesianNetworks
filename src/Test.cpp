@@ -67,7 +67,7 @@ bool Test::normalized(Network& network) {
     // machine epsilon
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
-    for (int i = 0; i < network.size(); i++) { // ciclo su tutte le variabili
+    for (int i = 0; i < static_cast<int>(network.size()); i++) { // ciclo su tutte le variabili
         double sum = 0.0;
 
         const Variable& variable = network[i];

@@ -55,7 +55,7 @@ void Parser::parseVariable() {
     cleanString();
 
     std::string variableName = s; // salvo nome variabile
-    int variableId = variables.size(); // assegno ID disponibile
+    int variableId = static_cast<int>(variables.size()); // assegno ID disponibile
     id[variableName] = variableId;
 
     // creo nuovo oggetto di tipo Variable
@@ -131,11 +131,11 @@ void Parser::parseProbability() {
 
     // ora leggo la CPT
 
-    int numParents = variables[childId].parents.size();
-    int numValues = variables[childId].values.size();
+    int numParents = static_cast<int>(variables[childId].parents.size());
+    int numValues = static_cast<int>(variables[childId].values.size());
 
     // ricavo numero righe da leggere
-    int numRows = 1;
+    size_t numRows = 1;
     for (int parentId : variables[childId].parents) numRows *= variables[parentId].values.size();
 
     // riservo lo spazio corretto nella CPT
@@ -184,7 +184,7 @@ void Parser::parseProbability() {
                     int parentId = variables[childId].parents[i];
 
                     int valueId = -1;
-                    for (int v=0; v < variables[parentId].values.size(); v++) {
+                    for (size_t v = 0; v < variables[parentId].values.size(); v++) {
                         if (variables[parentId].values[v] == valueName) {
                             valueId = v;
                             break;
@@ -242,7 +242,7 @@ int Parser::getCptRow(
 
     /*  ciclo su tutti i genitori della variabile child
         parto dall'ultimo (il valore cambia più velocemente) */
-    for (int i = variables[childId].parents.size()-1; i>=0; i--) {
+    for (int i = static_cast<int>(variables[childId].parents.size()) - 1; i >= 0; i--) {
         int parentId = variables[childId].parents[i];
 
         auto iter = partialAssignment.find(parentId);

@@ -3,7 +3,7 @@
 double Network::getJointProbability(const std::vector<int>& assignment) const {
 
     // controllo che l'assignment abbia la dimensione giusta
-    if (assignment.size() != this->size()) {
+    if (assignment.size() != static_cast<size_t>(this->size())) {
         throw std::invalid_argument("Network::getJointProbability: errore nel calcolo della joint probability, l'assignment ha una dimensione errata");
     }
 
@@ -73,7 +73,7 @@ double Network::getMarginalProbability(const std::string& variableName, const st
             } else {
                 // variabile libera
                 // espando per ogni valore possibile
-                int possibleValues = variables[id].values.size();
+                int possibleValues = static_cast<int>(variables[id].values.size());
 
                 for (int v = 0; v < possibleValues; v++) {
                     std::vector<int> newAssignment = assignment;

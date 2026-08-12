@@ -20,7 +20,7 @@ void Network::addVariable(const Variable& variable) {
     }
 
     // trovo id disponibile per nuova variabile
-    int variableId = variables.size();
+    int variableId = static_cast<int>(variables.size());
 
     id[variable.name] = variableId; // aggiungo l'id alla mappa
     variables.push_back(variable); // aggiungo variabile al vettore variables
@@ -42,7 +42,7 @@ void Network::addVariable(const Variable& variable) {
 Network::Network() = default;
 
 Network::Network(const std::vector<Variable>& variables) {
-    int n = variables.size();
+    int n = static_cast<int>(variables.size());
 
     this->variables.reserve(n);
     adj.resize(n);
@@ -123,7 +123,7 @@ int Network::getVariableId(const std::string& name) const {
 int Network::getValueIndex(int variableId, const std::string& valueName) const {
     const Variable& variable = (*this)[variableId];
 
-    for (int i = 0; i < variable.values.size(); i++) {
+    for (size_t i = 0; i < variable.values.size(); i++) {
         if (variable.values[i] == valueName) return i;
     }
 
@@ -136,7 +136,7 @@ int Network::getCptRow(const Variable& variable, const std::vector<int>& assignm
 
     /*  ciclo su tutti i genitori di variable
         parto dall'ultimo (il valore cambia più velocemente) */
-    for (int i = variable.parents.size()-1; i>=0; i--) {
+    for (int i = static_cast<int>(variable.parents.size()) - 1; i >= 0; i--) {
         int parentId = variable.parents[i];
         int assignedValueId = assignment[parentId];
 

@@ -65,7 +65,7 @@ double getMarginalProbability(const std::string& variableName, const std::string
 
 // restituisce il numero di variabili del network
 inline int size() const {
-    return variables.size();
+    return static_cast<int>(variables.size());
 }
 
 // getter per topologicalOrder
@@ -90,7 +90,7 @@ int getVariableId(const std::string& name) const;
 /*  overload dell'operatore []
 network[ID] restituisce una reference alla variabile con quell'ID  */ 
 inline const Variable& operator[](int variableId) const {
-    if (variableId >= 0 && variableId < variables.size()) {
+    if (variableId >= 0 && static_cast<size_t>(variableId) < variables.size()) {
         return variables[variableId];
     } else {
         throw std::out_of_range("Network::operator[]: non c'è nessuna variabile con id = " + std::to_string(variableId));
