@@ -11,7 +11,7 @@ void Network::addVariable(const Variable& variable) {
 
     // eccezione se un genitore indicato non esiste nel network
     for (int parentId : variable.parents) {
-        if (parentId < 0 || parentId >= variables.size()) {
+        if (parentId < 0 || parentId >= static_cast<int>(variables.size())) {
             throw std::invalid_argument(
                 "Network::addVariable: genitore con id " + std::to_string(parentId) +
                 " non esiste (variabile \"" + variable.name + "\")"
@@ -99,7 +99,7 @@ void Network::updateTopologicalOrder() {
         }
     }
 
-    if (result.size() != n) throw std::runtime_error("Network::updateTopologicalOrder: errore network ciclico");
+    if (static_cast<int>(result.size()) != n) throw std::runtime_error("Network::updateTopologicalOrder: errore network ciclico");
 
     topologicalOrder = result;
 }

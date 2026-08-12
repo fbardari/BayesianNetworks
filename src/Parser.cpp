@@ -165,7 +165,7 @@ void Parser::parseProbability() {
             if (log) std::cout << "Parser::parseProbability: numParents=" << numParents << ", numValues=" << numValues << std::endl;
 
             // ciclo su ogni riga
-            for (int row=0; row < numRows; row++) {
+            for (int row=0; row < static_cast<int>(numRows); row++) {
                 std::unordered_map<int, int> partialAssignment;
 
                 if (log) std::cout << "Parser::parseProbability: leggo riga " << row << std::endl;

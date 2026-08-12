@@ -56,7 +56,7 @@ double Network::getMarginalProbability(const std::string& variableName, const st
         std::vector<double> nextProbs;
 
         // scorro tutti gli stati correnti
-        for (int i = 0; i < states.size(); i++) {
+        for (int i = 0; i < static_cast<int>(states.size()); i++) {
 
             std::vector<int> assignment = states[i];
             double prob = stateProbs[i];
