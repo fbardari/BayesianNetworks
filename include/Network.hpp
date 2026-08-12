@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <stdexcept>
 
 #include "Variable.hpp"
@@ -32,8 +33,8 @@ std::vector<int> topologicalOrder;
 // aggiorna il vettore topologicalOrder
 void updateTopologicalOrder();
 
-// funzione ricorsiva utilizzata in getMarginalProbability()
-double marginalRecursive(int variableId, std::vector<int>& assignment) const;
+// restituisce l'insieme degli antenati di una variabile
+std::unordered_set<int> getAncestors(int variableId) const;
 
 public:
 

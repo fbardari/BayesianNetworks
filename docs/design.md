@@ -103,7 +103,7 @@ Sono implementate nel file `Network_probability.cpp`.
     - network.**getValueIndex**(variableId, valueName): (ID variabile, nome valore) -> ID valore (per esempio "true" = 0, "false" = 1 ...);
     - **network\[variableId\]** = overload dell'operatore [] che restituisce una reference alla variabile con l'ID specificato.
 
-### Fase 2: calcolo della probabilità marginale (enumerazione completa)
+### [obsoleto] ~~Fase 2:~~ calcolo della probabilità marginale (enumerazione completa)
 
 - Abbiamo adesso le strutture per rappresentare il network e le CPT.
 - Abbiamo una funzione (**getJointProbability**) che dato un assignment completo ci da la probabilità congiunta di quella specifica configuazione (es. *p(a=false, b=true, c=true...)*)
@@ -114,7 +114,7 @@ Sono implementate nel file `Network_probability.cpp`.
     - a questo punto viene chiamata la funzione ricorsiva **marginalRecursive** che prende in input l'ID di una variabile da processare e un assignment completo
 - Fatto un test per controllare che le probabilità marginali siano correttamente normalizzate (si veda **Test::marginal()**).
 
-#### Funzionamento dell'algoritmo ricorsivo di marginalizzazione
+#### [obsoleto] Funzionamento dell'algoritmo ricorsivo di marginalizzazione
 - Stato iniziale: viene creato un vettore assignment inizializzato a -1 (ad eccezione della variabile target). La ricorsione parte dalla variabile con id=0.
     - Caso id=n -> il vettore assignment è completo, restituiamo la probabilità congiunta di quella specifica combinazione.
     - Caso assigment[id] != -1 -> quella variabile è l'evidenza oppure il valore è già fissato, saltiamo e chiamiamo ricorsivamente la funzione per la variabile "id+1"
@@ -122,6 +122,21 @@ Sono implementate nel file `Network_probability.cpp`.
 - **Nota sulla complessità computazionale dell'algoritmo**:
     - *punto di debolezza*: la complessità temporale è esponenziale, per ognuna delle n variabili l'algoritmo deve esplorare K^(n-1) configurazioni -> complessità o(n * K^n) (dove K è il numero di valori possibili)
     - *punto di forza*: basso consumo di memoria, infatti l'algoritmo riutilizza lo stesso vettore di assignment, passato nelle chiamate ricorsive per riferimento: la memoria è occupata unicamente da questo vettore e dalla probabilità, generando una complessità spaziale lineare o(n).
+
+### Fase 2bis: ottimizzazione del calcolo della probabilità marginale
+- **PROBLEMA**: l'algoritmo ricorsivo dell'approccio utilizzato fin'ora prova tutte le combinazioni possibili di tutte le variabili della rete, anche quelle che non c'entrano niente con la variabile target. -> **SOLUZIONE**: considerare solo gli antenati (i figli e i rami scollegati non servono nel calcolo, sommando i contributi fanno 1).
+    - Esempio: p(b=true) con b che dipende solo da a, lavoro solo su a, invece che su tutte le variabili della rete.
+    - Aggiungo un metodo privato **getAncestors(variableId)**, che restituisce l'insieme degli ID antenati di una variabile (genitori, genitori dei genitori, ...), tramite una visita del grafo all'indietro seguendo `Variable::parents`.
+    - In **getMarginalProbability**, calcolo l'insieme delle variabili rilevanti (target e tutti i suoi antenati), e filtro `topologicalOrder` mantenendo solo gli ID rilevanti (nell'ordine già corretto).
+- Processerò le variabili una alla volta seguendo l'ordine topologico, già implementato nella classe Network.
+    - Elimino la ricorsione esplicita (**marginalRecursive**) e la sostituisco con un ciclo.
+    - Mantengo una lista di **stati parziali**: coppie (assignment parziale, probabilità accumulata). Parto da un solo stato: target fissato al valore richiesto, probabilità 1.0.
+    - Per ognuna delle variabili rilevanti (ordinate secondo ordinamento topologico):
+        - se la variabile è già fissata (il target): moltiplico la probabilità di ogni stato per il fattore CPT corrispondente al valore fissato;
+        - se la variabile non è ancora fissata: sdoppio ogni stato esistente in tante copie quanti sono i valori possibili della variabile, moltiplicando ciascuna copia per il fattore CPT corrispondente (i genitori sono già assegnati, essendo rispettato l'ordine topologico).
+    - Al termine del ciclo, sommo le probabilità di tutti gli stati rimasti: è il risultato della marginale cercata.
+    - **Vantaggio**: no ricorsione, no stack di chiamate; il numero di variabili processate è ridotto ai soli antenati rilevanti invece che a tutte le n variabili della rete.
+    - Complessità rimane esponenziale nel numero *m* di variabili *rilevanti* -> O(m * K^m)).
 
 ### Fase 3: parsing file BIF
 

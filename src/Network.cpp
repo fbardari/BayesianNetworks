@@ -150,3 +150,21 @@ int Network::getCptRow(const Variable& variable, const std::vector<int>& assignm
 int Network::getCptRow(int variableId, const std::vector<int>& assignment) const {
     return getCptRow((*this)[variableId], assignment);
 }
+
+std::unordered_set<int> Network::getAncestors(int variableId) const {
+    std::unordered_set<int> visited;
+    std::queue<int> q;
+    q.push(variableId);
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        for (int parentId : variables[u].parents) {
+            if (visited.insert(parentId).second) { // true se non era già presente
+                q.push(parentId);
+            }
+        }
+    }
+
+    return visited; // non include variableId stesso
+}
