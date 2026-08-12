@@ -76,6 +76,10 @@ Sono implementate nel file `Network_probability.cpp`.
 6. [ ] variable elimination
 7. [ ] eventuale interfaccia utente
 
+### Dettagli minori
+
+- [x] risolta incongruenza tra tipi *int* e *size_t* usando `static_cast` (dava origine a dei warning in fase di compilazione)
+
 ### Fase 1: strutture per rappresentare la rete bayesiana
 
 - Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
