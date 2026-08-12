@@ -84,152 +84,151 @@ void Parser::parseVariable() {
     variables.push_back(newVariable);
 }
 
+
+
 void Parser::parseProbability() {
+    int childId = readProbabilityChild();
+    readParents(childId);
+
+    int numRows = 1;
+    for (int parentId : variables[childId].parents) {
+        numRows *= variables[parentId].values.size();
+    }
+    variables[childId].CPT.assign(numRows, std::vector<double>());
+
+    readCptTable(childId);
+}
+
+int Parser::readProbabilityChild() {
     while (file >> s) { // vado avanti finché non trovo il nome della variabile
         cleanString();
         if (s != "") break;
     }
 
-    std::string childName = s; // salvo nome variabile figlio
-    int childId = id[childName]; // recupero il suo ID
+    std::string childName = s;
+    int childId = id[childName];
 
     if (log) std::cout << "Parser::parseProbability: trovata variabile figlio \'" << childName << "\'\n";
-    
 
+    return childId;
+}
+
+void Parser::readParents(int childId) {
     while (file >> s) {
-        /*
-        vado avanti finché non capisco se ci sono genitori o no
-        se ci sono -> salvo i loro ID in variables[].parents
-        */
-
         if (s == "|") { // ci sono genitori
             if (log) std::cout << ", ha genitori:";
 
-            while(file >> s && s != "{" && s!= ")") { // ciclo su tutti i genitori
+            while (file >> s && s != "{" && s != ")") { // ciclo su tutti i genitori
                 cleanString();
                 if (s.empty()) continue;
-                
-                // salvo nome genitore
+
                 std::string parentName = s;
                 int parentId = id[parentName];
 
-                // log nome genitore
                 if (log) std::cout << " " << parentName;
 
-                // salvo id genitore in variables[].parents
                 variables[childId].parents.push_back(parentId);
             }
 
             if (log) std::cout << std::endl;
-            break; // vado avanti a leggere la CPT
+            return; // vado avanti a leggere la CPT
         } else { // no genitori
             if (log) std::cout << ", non ha genitori\n";
-            break; // vado avanti a leggere la CPT
+            return; // vado avanti a leggere la CPT
         }
     }
+}
 
-
-    // ora leggo la CPT
-
-    int numParents = static_cast<int>(variables[childId].parents.size());
-    int numValues = static_cast<int>(variables[childId].values.size());
-
-    // ricavo numero righe da leggere
-    size_t numRows = 1;
-    for (int parentId : variables[childId].parents) numRows *= variables[parentId].values.size();
-
-    // riservo lo spazio corretto nella CPT
-    variables[childId].CPT.assign(numRows, std::vector<double>());
-
+void Parser::readCptTable(int childId) {
     while (file >> s) {
         cleanString();
         if (s.empty()) continue;
 
-        if (s == "table") { // caso senza genitori
-            if (log) std::cout << "Parser::parseProbability: salvate probabilità";
-            while (file >> s && s != "}") {
-                cleanString();
-
-                // salta eventuali stringhe non numeriche
-                if (s.empty()) continue;
-
-                // salvo probabilità
-                double prob = std::stod(s);
-                variables[childId].CPT[0].push_back(prob);
-                if (log) std::cout << " " << prob;
-            }
-            if (log) std::cout << "\n";
-            break;
-        } else { // caso con genitori
-
-            if (log) std::cout << "Parser::parseProbability: numParents=" << numParents << ", numValues=" << numValues << std::endl;
-
-            // ciclo su ogni riga
-            for (int row=0; row < static_cast<int>(numRows); row++) {
-                std::unordered_map<int, int> partialAssignment;
-
-                if (log) std::cout << "Parser::parseProbability: leggo riga " << row << std::endl;
-
-                if (log) std::cout << "       leggo valori ";
-
-                // ciclo su ogni valore della riga
-                for (int i=0; i < numParents; i++) {
-                    cleanString();
-                    while(s.empty()) {
-                        file >> s;
-                        cleanString();
-                    }
-
-                    std::string valueName = s;
-                    int parentId = variables[childId].parents[i];
-
-                    int valueId = -1;
-                    for (size_t v = 0; v < variables[parentId].values.size(); v++) {
-                        if (variables[parentId].values[v] == valueName) {
-                            valueId = v;
-                            break;
-                        }
-                    }
-                    partialAssignment[parentId] = valueId;
-
-                    if (log) std::cout << " " << valueName << "(parentId=" << valueId << ",valueId=" << valueId << ")";
-
-                    file >> s;
-                }
-                if (log) std::cout << std::endl;
-
-                // trova riga in cui inserire le probabilità
-                int cptRow = Parser::getCptRow(childId, partialAssignment);
-
-                if (log) std::cout << "       leggo probabilita ";
-
-                // ciclo su ogni probabilità della riga
-                for (int i=0; i < numValues; i++) {
-                    cleanString();
-                    while (s.empty()) {
-                        file >> s;
-                        cleanString();
-                    }
-
-                    double prob = std::stod(s);
-
-                    if (log) std::cout << " " << prob;
-
-                    // inserisco probabilità nella tabella
-                    variables[childId].CPT[cptRow].push_back(prob);
-
-                    file >> s;
-                    
-                }
-                if (log) std::cout << std::endl;
-            }
-
-            break;
+        if (s == "table") {
+            readCptTableNoParents(childId);
+        } else {
+            readCptRows(childId);
         }
-
+        return;
     }
-        
-    return;
+}
+
+void Parser::readCptTableNoParents(int childId) {
+    if (log) std::cout << "Parser::parseProbability: salvate probabilità";
+
+    while (file >> s && s != "}") {
+        cleanString();
+        if (s.empty()) continue;
+
+        double prob = std::stod(s);
+        variables[childId].CPT[0].push_back(prob);
+        if (log) std::cout << " " << prob;
+    }
+
+    if (log) std::cout << "\n";
+}
+
+void Parser::readCptRows(int childId) {
+    int numParents = variables[childId].parents.size();
+    int numValues = variables[childId].values.size();
+
+    if (log) std::cout << "Parser::parseProbability: numParents=" << numParents << ", numValues=" << numValues << std::endl;
+
+    int numRows = variables[childId].CPT.size();
+
+    for (int row = 0; row < numRows; row++) {
+        std::unordered_map<int, int> partialAssignment;
+
+        if (log) std::cout << "Parser::parseProbability: leggo riga " << row << std::endl;
+        if (log) std::cout << "\tleggo valori ";
+
+        // ciclo su ogni valore genitore della riga
+        for (int i = 0; i < numParents; i++) {
+            cleanString();
+            while (s.empty()) {
+                file >> s;
+                cleanString();
+            }
+
+            std::string valueName = s;
+            int parentId = variables[childId].parents[i];
+
+            int valueId = -1;
+            for (size_t v = 0; v < variables[parentId].values.size(); v++) {
+                if (variables[parentId].values[v] == valueName) {
+                    valueId = v;
+                    break;
+                }
+            }
+            partialAssignment[parentId] = valueId;
+
+            if (log) std::cout << " " << valueName << "(parentId=" << valueId << ",valueId=" << valueId << ")";
+
+            file >> s;
+        }
+        if (log) std::cout << std::endl;
+
+        int cptRow = getCptRow(childId, partialAssignment);
+
+        if (log) std::cout << "\tleggo probabilita ";
+
+        // ciclo su ogni probabilità della riga
+        for (int i = 0; i < numValues; i++) {
+            cleanString();
+            while (s.empty()) {
+                file >> s;
+                cleanString();
+            }
+
+            double prob = std::stod(s);
+            if (log) std::cout << " " << prob;
+
+            variables[childId].CPT[cptRow].push_back(prob);
+
+            file >> s;
+        }
+        if (log) std::cout << std::endl;
+    }
 }
 
 

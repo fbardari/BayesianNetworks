@@ -32,6 +32,25 @@ void parseNetwork();
 void parseVariable();
 void parseProbability();
 
+
+// legge il nome della variabile figlio del blocco probability corrente
+// -> restituisce il suo ID
+int readProbabilityChild();
+
+// legge (se presenti) i genitori dopo il carattere '|'
+// e li salva in variables[childId].parents
+void readParents(int childId);
+
+// capisce se la CPT ha genitori o no e chiama la funzione corretta
+void readCptTable(int childId);
+
+// legge la CPT nel caso senza genitori
+void readCptTableNoParents(int childId);
+
+// legge la CPT riga per riga nel caso con genitori
+void readCptRows(int childId);
+
+
 /*
 prende in input (variabile child, tutte le altre variabili, assignment PARZIALE)
 -> restituisce riga della tabella CPT in cui devo memorizzare l'assignment
