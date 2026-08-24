@@ -12,16 +12,6 @@ Debug/
 Release/
 cmake-build-*/
 
-# CMake
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-compile_commands.json
-CTestTestfile.cmake
-Makefile
-install_manifest.txt
-Testing/
-
 *.d
 
 # Object files
