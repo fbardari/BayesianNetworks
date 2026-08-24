@@ -1,13 +1,13 @@
 #include <iostream>
-
-#include "Network.hpp"
-#include "Utilities.hpp"
-#include "Test.hpp"
-#include "Parser.hpp"
+#include "Menu.hpp"
 
 
 int main() {
-    Network importedNetwork = Parser::importBIF("./data/asia.bif", false);
 
-    std::cout << Test::normalized(importedNetwork);
+       
+    Menu menu;
+    menu.run();
+    
+
+    return 0;
 }

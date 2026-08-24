@@ -168,3 +168,12 @@ std::unordered_set<int> Network::getAncestors(int variableId) const {
 
     return visited; // non include variableId stesso
 }
+
+
+std::vector<std::string> Network::getNames() const {
+    std::vector<std::string> result(size());
+
+    for (int i = 0; i < size(); i++) result[i] = variables[i].name;
+
+    return result;
+}

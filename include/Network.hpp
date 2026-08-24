@@ -87,6 +87,15 @@ int getValueIndex(int variableId, const std::string& valueName) const;
 // nome variabile -> ID variabile
 int getVariableId(const std::string& name) const;
 
+std::vector<std::string> getNames() const; // getter per lista nomi variabili
+
+// conta numero di archi del grafo
+inline int arcsCount() const {
+    int result = 0;
+    for (const auto& v : variables) result += v.parents.size();
+    return result;
+}
+
 /*  overload dell'operatore []
 network[ID] restituisce una reference alla variabile con quell'ID  */ 
 inline const Variable& operator[](int variableId) const {
@@ -98,5 +107,19 @@ inline const Variable& operator[](int variableId) const {
 }
 
 };
+
+
+/*
+alcuni OVERLOAD dell'operatore "<<"
+(le definizioni sono nel file "Network_print.cpp")
+*/
+
+//   cout << variable; -> restituisce tutte le info della variabile
+std::ostream& operator<<(std::ostream& os, const Variable& variable);
+
+/*   cout << network; -> restituisce alcune info del network,
+                       incluse liste di adiacenza */
+std::ostream& operator<<(std::ostream& os, const Network& network);
+
 
 #endif

@@ -18,6 +18,11 @@ Il progetto è suddiviso nei seguenti moduli:
     - contiene i getter per il calcolo delle probabilità marginali e condizionali.
 - **Utilities**: funzioni di supporto generiche (es. stampa di vettori)
 - **Test**: un namespace che contiene varie funzioni di test (es. check normalizzazione)
+- **Menu**: gestisce l'interfaccia utente da riga di comando per permettere di:
+    - caricare file BIF;
+    - ispezionare le proprietà della rete;
+    - calcolare probabilità congiunte e marginali (e in futuro implementerà eventualmente anche probabilità condizionale e VE);
+    - aggiungere variabili al network.
 
 Estensioni / moduli aggiuntivi (da valutare più avanti):
 
@@ -72,9 +77,9 @@ Sono implementate nel file `Network_probability.cpp`.
     - [x] deve essere capace di leggere i blocchi variable
     - [x] e di popolare le tabelle CPT leggendo i blocchi probability
     - ~~[ ] TODO: ottimizzare firma della funzione helper **Parser::getCptRow()**, non necessario che sia static, non necessario passaggio per riferimento~~ *rimossa inutile complicazione*
-5. [ ] probabilità condizionale
-6. [ ] variable elimination
-7. [ ] eventuale interfaccia utente
+5. [x] eventuale interfaccia utente
+6. [ ] probabilità condizionale
+7. [ ] variable elimination
 
 ### Dettagli minori
 
