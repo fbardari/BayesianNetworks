@@ -9,11 +9,11 @@ Il programma deve essere in grado di:
 
 ## Struttura base del progetto
 
-Il progetto è suddiviso nei seguenti moduli:
+Il programma è suddiviso nei seguenti moduli:
 
 - **Parser**: legge un file in formato BIF e salva le variabili della rete (nome, valori possibili, genitori, CPT).
 - Classe **Network**:
-    - rappresenta la rete bayesiana come DAG;
+    - rappresenta la rete bayesiana come **DAG** (*Directed Acyclic Graph*);
     - conserva le variabili della rete (rappresentate dalla struct **Variable** definita nel file *Variable.hpp*), le liste di adiacenza e l'ordinamento topologico;
     - contiene i getter per il calcolo delle probabilità marginali e condizionali.
 - **Utilities**: funzioni di supporto generiche (es. stampa di vettori)
@@ -44,22 +44,72 @@ La classe **`Network`** rappresenta la rete bayesiana e fornisce le funzioni per
 
 #### Stato interno
 
-- `variables`: vettore che contiene le variabili della rete (ordinate secondo gli ID assegnati);
-- `adj`: liste di adiacenza che tracciano i figli di ogni variabile (cioè `adj[i]` contiene la lista dei figli della variabile con ID uguale ad i);
-- `id`: mappa che permette di trovare l'ID di una variabile dato il suo nome (es. `id['c']` -> 3);
-- `topologicalOrder`: contiene gli ID delle variabili ordinate secondo l'ordine topologico.
+Lo stato interno della classe **`Network`** contiene i seguenti membri privati:
+- **`variables`**: vettore che contiene le variabili della rete (ordinate secondo gli ID assegnati);
+- **`adj`**: liste di adiacenza che tracciano i figli di ogni variabile (cioè `adj[i]` contiene la lista dei figli della variabile con ID uguale ad i);
+- **`id`**: *unordered map* che permette di trovare l'ID di una variabile dato il suo nome (es. `id['c']` -> 3);
+    - *nota complessità*: unordered map è una tabella hash: la chiave, in questo caso la stringa, viene trasformata da una funzione di hashing nell'indice del bucket in cui cercare l'elemento; in questo modo la ricerca presenta una complessità *media* costante O(1) (costo del calcolo dell'hash), che può salire a O(n) nel *worst case scenario* (collisione tra chiavi).
+- **`topologicalOrder`**: contiene gli ID delle variabili ordinate secondo l'ordine topologico.
 
-#### Funzioni per il calcolo delle probabilità
+I membri sopra indicati sono privati in quanto sono stati pensati per essere aggiornati automaticamente in modo *sicuro* e *coerente* ogni volta che aggiungiamo variabili alla rete, utilizzando gli appositi metodi pubblici. In questo modo si evitano a monte problemi come ID/nomi duplicati, genitori inesistenti, ciclicità della rete (si veda l'implementazione dei metodi seguenti, che sollevano le eccezioni opportune in caso di errore).
 
-Sono implementate nel file `Network_probability.cpp`.
+#### Metodi che modificano lo stato interno
+
+Di seguito la descrizione dei metodi che modificano lo stato interno della classe (implementati in `Network.cpp`).
+
+- **`addVariable(variable)`**
+    - **input**: riferimento costante alla variabile (tipo: Variable) che si desidera aggiungere alla rete
+    - **cosa controlla**:
+        - che il nome della variabile non sia già preso
+        - che gli ID dei genitori esistano
+        - che la rete costruita aggiungendo la variabile non sia ciclica (indirettamente, tramite `updateTopologicalOrder()`)
+    - **cosa fa**:
+        - assegna un ID disponibile alla variabile;
+        - aggiunge la nuova variabile al vettore *variables* (l'istanza contiene tutte le informazioni inclusa lista genitori tabella CPT);
+        - modifica coerentemente `id` (associando il suo nome al suo ID) e `adj` (per ognuno dei suoi genitori, aggiunge questa variabile come figlio);
+        - chiama `updateTopologicalOrder()` per aggiornare l'ordine topologico.
+
+- **`updateTopologicalOrder()`**
+    - **cosa controlla**: che la rete non sia ciclica.
+    - **cosa fa**: costruisce l'ordine topologico mediante l'*algoritmo di Kahn*, cioè:
+        - conta il numero di genitori di ogni variabile e inserisce in coda i nodi senza genitori
+        - per ogni nodo, lo aggiunge all'ordinamento e decrementa - per ognuno dei suoi figli - il numero di genitori da processare
+        - quando un figlio non ha più genitori da processare, viene inserito nella coda
+        - se al termine non sono stati elaborati tutti i nodi, la rete contiene un ciclo -> in quel caso solleva un'eccezione
+        - se sono stati elaborati tutti i nodi -> salva il risultato in `topologicalOrder`
+    - **complessità**: il for iniziale ha complessità lineare O(n_nodi) nel numero di nodi, il ciclo while ha complessità lineare O(n_archi) nel numero di archi (per ogni nodo, un for processa tutti i genitori) -> complessità totale O(n_nodi + n_archi)
+
+- **costruttore - default** `Network()`  
+    - **cosa fa**: crea una rete vuota.
+
+- **costruttore - overload con input vector di variabili** `Network(variables)`
+    - **input**: riferimento costante ad un vector di variabili
+    - **cosa fa**:
+        - aggiunge tutte le variabili del vettore in input alla rete, facendo tutti i controlli necessari e gli update dello stato interno, esattamente come fa `addVariable(variable)`;
+        - *solo alla fine* aggiorna ordine topologico chiamando `updateTopologicalOrder()` (sarebbe inutile fare *N_nodi* chiamate, chiamo il metodo una sola volta alla fine).
+
+#### Metodi per il calcolo delle probabilità
+
+I seguenti metodi calcolano le probabilità (sono implementati nel file `Network_probability.cpp`)
 
 - `getJointProbability()`: calcola la probabilità congiunta data una configurazione completa di assegnamento;
 - `getMarginalProbability()`: calcola la probabilità marginale di una specifica variabile e valore assegnato, per enumerazione completa;
 - `getCptRow()`: calcola l'indice della riga della tabella CPT corrispondente a un dato assegnamento.
 
-#### Altre funzioni
+#### Altri metodi che NON modificano lo stato interno
 
-- ...
+Di seguito la descrizione di altri metodi pubblici della classe Network che NON modificano lo stato interno della classe (implementati in `Network.cpp`). 
+
+- `size()`: restituisce il numero di variabili del network;
+- `getNames()`: restituisce i nomi di tutte le variabili (vector di stringhe);
+- `arcsCount()`: restituisce il numero di archi del grafo;
+- `getVariableId(name)`: dato in input il nome di una variabile, restituisce il suo ID, accedendo alla unordered map "id";
+- `getChildren(id)`: dato l'ID di una variabile, restituisce un riferimento costante ad un vettore che contiene gli ID dei suoi figli, accedendo alle liste di adiacenza;
+- `getTopologicalOrder()`: getter per topologicalOrder;
+- `getValues(variableName)`: dato in input il nome di una variabile, restituisce un riferimento costante ad un vettore di stringhe contenente i nomi valori possibili (esempio: getValues("a") -> {"true", "false"});
+- `getValueIndex(variableId, valueName`): dati in input l'ID di una variabile e il nome di un valore possibile, restituisce l'ID di quel valore (i.e. l'indice in corrispondenza del quale il valore è memorizzato in variable.values);
+- `getAncestors(variableId)`: dato in input l'ID di una variabile, restituisce un unordered_set che contiene l'insieme di *tutti* gli antenati di quella variabile (cioè quelli che sono rilevanti per il calcolo della probabilità marginale).
+- overload dell'operatore `operator[]`: in modo che network[ID] restituisca una reference alla variabile con quell'ID.
 
 ## Stato di avanzamento
 

@@ -33,9 +33,6 @@ std::vector<int> topologicalOrder;
 // aggiorna il vettore topologicalOrder
 void updateTopologicalOrder();
 
-// restituisce l'insieme degli antenati di una variabile
-std::unordered_set<int> getAncestors(int variableId) const;
-
 public:
 
 /* aggiunge un oggetto del tipo variabile al network,
@@ -88,6 +85,9 @@ int getValueIndex(int variableId, const std::string& valueName) const;
 int getVariableId(const std::string& name) const;
 
 std::vector<std::string> getNames() const; // getter per lista nomi variabili
+
+// restituisce l'insieme degli antenati di una variabile
+std::unordered_set<int> getAncestors(int variableId) const;
 
 // conta numero di archi del grafo
 inline int arcsCount() const {
