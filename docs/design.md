@@ -107,8 +107,18 @@ Di seguito la descrizione di altri metodi pubblici della classe Network che NON 
 - `getChildren(id)`: dato l'ID di una variabile, restituisce un riferimento costante ad un vettore che contiene gli ID dei suoi figli, accedendo alle liste di adiacenza;
 - `getTopologicalOrder()`: getter per topologicalOrder;
 - `getValues(variableName)`: dato in input il nome di una variabile, restituisce un riferimento costante ad un vettore di stringhe contenente i nomi valori possibili (esempio: getValues("a") -> {"true", "false"});
-- `getValueIndex(variableId, valueName`): dati in input l'ID di una variabile e il nome di un valore possibile, restituisce l'ID di quel valore (i.e. l'indice in corrispondenza del quale il valore è memorizzato in variable.values);
-- `getAncestors(variableId)`: dato in input l'ID di una variabile, restituisce un unordered_set che contiene l'insieme di *tutti* gli antenati di quella variabile (cioè quelli che sono rilevanti per il calcolo della probabilità marginale).
+- `getValueIndex(variableId, valueName`): dati in input l'ID di una variabile e il nome di un valore possibile, restituisce l'ID di quel valore (i.e. l'indice in corrispondenza del quale il valore è memorizzato in variable.values)
+    - *complessità*: esegue ricerca lineare in variable.values -> O(n_values);
+- `getAncestors(variableId)`: dato in input l'ID di una variabile, restituisce un unordered_set che contiene l'insieme di *tutti* gli antenati di quella variabile (cioè quelli che sono rilevanti per il calcolo della probabilità marginale)
+    - *algoritmo implementato*: ricerca in ampiezza (BFS)
+        1. parte dalla variabile in input e la mette in coda
+        2. ad ogni iterazione estrae un nodo u dalla coda e scorre i suoi genitori diretti (variables[u].parents).
+        3. per ogni genitore, prova ad inserirlo in visited: se l'inserimento ha successo (cioè non era già presente), lo aggiunge anche alla coda, per poi esplorare a sua volta i suoi genitori.
+        4. il ciclo continua finché la coda non si svuota, cioè quando abbiamo risalito il grafo visitando tutti gli antenati.
+    - *complessità*
+        - caso migliore: O(1), quando la variabile non ha genitori;
+        - caso peggiore: O(n_antenati + archi tra gli antenati), cioè quando la variabile dipende da tutta la rete;
+        - caso medio: dipende dalla struttura della rete, non si può determinare a priori.
 - overload dell'operatore `operator[]`: in modo che network[ID] restituisca una reference alla variabile con quell'ID.
 
 ## Stato di avanzamento
