@@ -1,4 +1,5 @@
 #include "Menu.hpp"
+#include <limits>
 
 Menu::Menu() = default;
 
