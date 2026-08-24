@@ -2,10 +2,11 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 void Parser::cleanString() {
     for (char c : ",;()[]{}\"") {
-        s.erase(remove(s.begin(), s.end(), c), s.end());
+        s.erase(std::remove(s.begin(), s.end(), c), s.end());
     }
 }
 
