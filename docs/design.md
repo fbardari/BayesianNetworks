@@ -38,6 +38,26 @@ La struct **`Variable`** rappresenta i singoli nodi (variabili casuali discrete)
 - `parents`: vector che contiene gli ID dei genitori della variabile;
 - `CPT`: tabella delle probabilità condizionate (*Conditional Probability Table*), memorizzata come matrice di valori di tipo `double`.
 
+    *Nota sulle tabelle CPT*:
+
+    - Le colonne corrispondono ai valori che la variabile può assumere (nell'esempio: d = true, false)
+    - Le righe corrispondono ad un assignment dei valori delle variabili genitori (nell'esempio: b, c).
+
+    ```
+    probability (d | b, c) {
+    (true, true) 0.9, 0.1;
+    (true, false) 0.7, 0.3;
+    (false, true) 0.6, 0.4;
+    (false, false) 0.1, 0.9;
+    }
+    ```
+
+    quindi, nel caso in esempio, la probabilità in posizione [0, 0] corrisponde a `P(d=true | b=true, c=true)`.
+    
+    La convenzione utilizzata per memorizzare i valori in `variable.CPT` è la seguente: le righe scorrono in modo che la variabile genitore più a destra sia quella con il valore che cambia più velocemente (nell'esempio: c = true/false/true/false, b = true/true/false/false, etc.).
+
+    Il metodo `getCptRow(assignment)` (descritto nelle sezioni successive) permette di ricavare la riga dato un assignment dei valori seguendo questa convenzione.
+
 ### Network.hpp
 
 La classe **`Network`** rappresenta la rete bayesiana e fornisce le funzioni per i calcoli delle probabilità marginali e congiunte.
@@ -92,9 +112,28 @@ Di seguito la descrizione dei metodi che modificano lo stato interno della class
 
 I seguenti metodi calcolano le probabilità (sono implementati nel file `Network_probability.cpp`)
 
-- `getJointProbability()`: calcola la probabilità congiunta data una configurazione completa di assegnamento;
+- funzione helper **`getCptRow(variable, assignment)`** oppure l'overload `getCptRow(variableId, assignment)`
+    - **input**
+        - variabile (passaggio per riferimento costante oppure direttamente il suo ID);
+        - vettore di interi che contiene l'assignment per *tutte* le variabili della rete (esempio `a=true, b=false, c=true -> {1, 0, 1}`), risulta comodo usare l'assignment completo perché è quello che ci servirà per il calcolo della probabilità marginale.
+    - **output**: indice della riga della tabella CPT corrispondente a quell'assignment;
+    - **cosa fa**: scorre sui genitori e, usando gli indici dei valori nell’assignment e un moltiplicatore basato sul numero di valori possibili, calcola e restituisce l’indice della riga corrispondente nella CPT (ogni genitore contribuisce a determinare "di quanti passi spostarsi" nella tabella);
+    - **complessità**: un ciclo for visita ogni genitore eseguendo operazioni di complessità costante -> complessità totale O(N_genitori).
+
+- `getJointProbability(assignment)`: calcola la probabilità congiunta data una configurazione completa di assegnamento
+
+    - **input**: vettore di assignment (esempio `a=true, b=false, c=true -> {1, 0, 1}`);
+    - **output**: probabilità congiunta dell'assignment (es. `P(a=true, b=false, c=true)`)
+    - **cosa fa**: ...
+    - **complessità**: ...
+
 - `getMarginalProbability()`: calcola la probabilità marginale di una specifica variabile e valore assegnato, per enumerazione completa;
-- `getCptRow()`: calcola l'indice della riga della tabella CPT corrispondente a un dato assegnamento.
+
+    - **input**: ...
+    - **output**: ...
+    - **cosa fa**: ...
+    - **complessità**: ...
+
 
 #### Altri metodi che NON modificano lo stato interno
 
@@ -112,14 +151,14 @@ Di seguito la descrizione di altri metodi pubblici della classe Network che NON 
 - `getAncestors(variableId)`: dato in input l'ID di una variabile, restituisce un unordered_set che contiene l'insieme di *tutti* gli antenati di quella variabile (cioè quelli che sono rilevanti per il calcolo della probabilità marginale)
     - *algoritmo implementato*: ricerca in ampiezza (BFS)
         1. parte dalla variabile in input e la mette in coda
-        2. ad ogni iterazione estrae un nodo u dalla coda e scorre i suoi genitori diretti (variables[u].parents).
-        3. per ogni genitore, prova ad inserirlo in visited: se l'inserimento ha successo (cioè non era già presente), lo aggiunge anche alla coda, per poi esplorare a sua volta i suoi genitori.
+        2. ad ogni iterazione estrae un nodo u dalla coda e scorre i suoi genitori (variables[u].parents).
+        3. per ogni genitore, prova ad inserirlo in visited: se l'inserimento ha successo (cioè non era già presente), lo aggiunge anche alla coda, per poi esplorare a sua volta i suoi genitori;
         4. il ciclo continua finché la coda non si svuota, cioè quando abbiamo risalito il grafo visitando tutti gli antenati.
     - *complessità*
         - caso migliore: O(1), quando la variabile non ha genitori;
         - caso peggiore: O(n_antenati + archi tra gli antenati), cioè quando la variabile dipende da tutta la rete;
         - caso medio: dipende dalla struttura della rete, non si può determinare a priori.
-- overload dell'operatore `operator[]`: in modo che network[ID] restituisca una reference alla variabile con quell'ID.
+- overload di `operator[]`: in modo che `network[ID]` restituisca una reference alla variabile con quell'ID.
 
 ## Stato di avanzamento
 
