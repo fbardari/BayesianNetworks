@@ -133,10 +133,34 @@ I seguenti metodi calcolano le probabilità (sono implementati nel file `Network
     - **input**: nome variabile target e nome valore assegnato, es. `getMarginalProbability("e", "true")`
     - **output**: probabilità marginalizzata `P(e=true)`
     - **cosa fa**: *enumerazione completa*
-        - calcola l'insieme delle variabili rilevanti (il target e i suoi antenati, ricavati usando `getAncestors`)
-        - filtra `topologicalOrder` mantenendo solo le variabili rilevanti
-        - ...
-    - **complessità**: ...
+        - usando `getAncestors` e `topologicalOrder` ricava le variabili *rilevanti*, cioè gli antenati ordinati topologicamente e la variabile target;
+        - prepara un vettore di stati e associa ad ognuno di questi una probabilità
+            - all'inizio abbiamo un solo stato con un valore dummy (-1) per tutte le variabili della rete, tranne che per la variabile target alla quale è assegnato il suo valore fissato;
+            - la probabilità associata è fissata inizialmente a 1;
+        - per ognuno degli antenati, il vettore degli stati viene ricostruito moltiplicando ogni stato in altri stati (uno per ogni valore possibile della variabile considerata), e la probabilità associata viene moltiplicata per il valore CPT corrispondente a quell'assignment, per esempio:
+        ```
+        Rete di esempio a -> b -> c -> ...
+        Target P(c = false)
+
+        [-1 -1 0 -1 ...] -> 1.0
+
+        [0 -1 0 -1 ...] -> P(a = false)
+        [1 -1 0 -1 ...] -> P(a = true)
+
+        [0 0 0 -1 ...] -> P(a = false) * P(b = false | a = false)
+        [0 1 0 -1 ...] -> P(a = false) * P(b = true | a = false)
+        [1 0 0 -1 ...] -> P(a = true) * P(b = false | a = true)
+        [1 1 0 -1 ...] -> P(a = true) * P(b = true | a = true)
+        ```
+        - una volta arrivati al target ogni stato resta identico, ma la probabilità viene comunque moltiplicata per il fattore CPT corrispondente al valore fissato (nell'esempio precedente, l'ultimo passo moltiplicherebbe ognuno dei 4 stati per `P(c = false | b = ...)`, con `b` preso dallo stato stesso);
+        ```
+        [0 0 0 -1 ...] -> P(a = false) * P(b = false | a = false) * P(c = false | b = false)
+        [0 1 0 -1 ...] -> P(a = false) * P(b = true | a = false) * P(c = false | b = true)
+        [1 0 0 -1 ...] -> P(a = true) * P(b = false | a = true) * P(c = false | b = false)
+        [1 1 0 -1 ...] -> P(a = true) * P(b = true | a = true) * P(c = false | b = true)
+        ```
+        - la somma di tutte le probabilità ottenute è per definizione la probabilità marginalizzata
+    - **complessità**: il costo computazionale dell'algoritmo utilizzato è O(m * k^m), dove k è il numero di valori possibili (assumendo che sia uguale per tutte le variabili), ed m è il numero di variabili rilevanti.
 
 
 #### Altri metodi che NON modificano lo stato interno
