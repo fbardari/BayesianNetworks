@@ -124,14 +124,18 @@ I seguenti metodi calcolano le probabilità (sono implementati nel file `Network
 
     - **input**: vettore di assignment (esempio `a=true, b=false, c=true -> {1, 0, 1}`);
     - **output**: probabilità congiunta dell'assignment (es. `P(a=true, b=false, c=true)`)
-    - **cosa fa**: ...
-    - **complessità**: ...
+    - **cosa controlla**: che l'assignment abbia la dimensione corretta;
+    - **cosa fa**: per ogni variabile individua nella CPT la probabilità corrispondente all'assignment (estraendo i valori dei suoi genitori dal vettore di assignment in input) e moltiplica tutte le probabilità ottenute;
+    - **complessità**: ogni variabile viene visitata una volta, e per ogni variabile viene chiamata `getCptRow` che visita tutti i suoi genitori -> complessità totale O(N_variabili + N_archi).
 
-- `getMarginalProbability()`: calcola la probabilità marginale di una specifica variabile e valore assegnato, per enumerazione completa;
+- `getMarginalProbability(variableName, valueName)`: calcola la probabilità marginale di una specifica variabile e valore assegnato
 
-    - **input**: ...
-    - **output**: ...
-    - **cosa fa**: ...
+    - **input**: nome variabile target e nome valore assegnato, per esempio es. `getMarginalProbability("e", "true")`
+    - **output**: probabilità marginalizzata `P(e=true)`
+    - **cosa fa**: *enumerazione completa*
+        - per la variabile target salva in un unordered set gli ID delle variabili rilevanti per il target (tutti gli antenati più il target stesso)
+        - estrae le variabili rilevanti dal vettore `topologicalOrder`, mantenendone l'ordine
+        - ...
     - **complessità**: ...
 
 

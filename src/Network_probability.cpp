@@ -9,7 +9,7 @@ double Network::getJointProbability(const std::vector<int>& assignment) const {
 
     double result = 1.0;
 
-    for (int id : topologicalOrder) {
+    for (int id = 0; id < static_cast<int>(size()); id++) {
         int row = getCptRow(variables[id], assignment);
         int column = assignment[id];
 
