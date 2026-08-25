@@ -130,11 +130,11 @@ I seguenti metodi calcolano le probabilità (sono implementati nel file `Network
 
 - `getMarginalProbability(variableName, valueName)`: calcola la probabilità marginale di una specifica variabile e valore assegnato
 
-    - **input**: nome variabile target e nome valore assegnato, per esempio es. `getMarginalProbability("e", "true")`
+    - **input**: nome variabile target e nome valore assegnato, es. `getMarginalProbability("e", "true")`
     - **output**: probabilità marginalizzata `P(e=true)`
     - **cosa fa**: *enumerazione completa*
-        - per la variabile target salva in un unordered set gli ID delle variabili rilevanti per il target (tutti gli antenati più il target stesso)
-        - estrae le variabili rilevanti dal vettore `topologicalOrder`, mantenendone l'ordine
+        - calcola l'insieme delle variabili rilevanti (il target e i suoi antenati, ricavati usando `getAncestors`)
+        - filtra `topologicalOrder` mantenendo solo le variabili rilevanti
         - ...
     - **complessità**: ...
 
