@@ -257,87 +257,34 @@ Il namespace `Test` contiene alcune funzioni utili per verificare il corretto fu
 - `Test::exampleNetwork()` restituisce la rete del file gradient.bif, creata manualmente (funzione utilizzata per verificare il corretto funzionamento del parser);
 - `Test::normalized(network)` restituisce true solo se tutte le probabilità marginali del network in input sono normalizzate a 1.0 (a meno del machine epsilon).
 
-### Dettagli minori
-
-- [x] risolta incongruenza tra tipi *int* e *size_t* usando `static_cast` (dava origine a dei warning in fase di compilazione)
-
 ### Fase 1: strutture per rappresentare la rete bayesiana
 
-- Il tipo **Variable** (definito in *Variable.hpp*) usato per descrivere i nodi è una struct con la seguente struttura:
-    - **name** è il nome della variabile;
-    - **values** sono i possibili valori che assume la variabile (esempio: *true*, *false*);
-    - **parents** è un vettore che contiene gli ID dei genitori;
-    - **CPT** (*Conditional Probability Table*) è la tabella che contiene le probabilità condizionate dai valori assunti dai genitori.
-- In questa prima fase costruisco la classe **Network** (*Network.hpp*, *Network.cpp*) a livello base, in particolare è dotata dei seguenti costruttori
-    - Network(): costruttore standard, crea una rete vuota;
-    - Network(variables): costruisce una rete partendo da un vettore di oggetti di tipo Variable.
-- dei seguenti campi privati:
-    - **variables**: vettore di elementi di tipo Variable che contiene tutte le variabili (i.e. i nodi) del network
-    - la lista di adiacenza **adj**, costruita in modo che: adj[ID] contiene la lista dei figli di una variabile dato il suo ID;
-    - **id**: una unordered map che associa ad ogni nome l'ID della variabile corrispondente;
-    - **topologicalOrder**: vettore che contiene gli ID delle variabili ordinate secondo l'ordine topologico;
-- e dei seguenti metodi:
-    - **addVariable**(variable): prende in input una reference a un oggetto del tipo Variable e lo aggiunge al network (facendo tutti i controlli necessari e aggiornando i campi, incluso l'ordine topologico);
-    - **updateTopologicalOrder**(): aggiorna l'ordine topologico (viene chiamato ogni volta che viene aggiunta una variabile) (-> inoltre è in grado di controllare se il network è ciclico, sollevando eventualmente un'eccezione).
-- aggiungo in questa fase dei getter che potrebbero essere utili nelle fasi successive:
-    - network.**size**() restituisce il numero di variabili (nodi) del network;
-    - network.**getTopologicalOrder**() restituisce il vettore che contiene gli ID delle variabili in ordine topologico;
-    - network.**getValues**(variableName): nome variabile -> nomi valori possibili (es. *true/false*);
-    - network.**getVariableId**(name): nome variabile -> ID (in altre parole, accesso in sola lettura alla mappa **id**);
-    - network.**getChildren**(id): getter per liste di adiacenza, id genitore -> vettore con id dei figli.
-    - network.**getValueIndex**(variableId, valueName): (ID variabile, nome valore) -> ID valore (per esempio "true" = 0, "false" = 1 ...);
-    - **network\[variableId\]** = overload dell'operatore [] che restituisce una reference alla variabile con l'ID specificato.
+In questa fase sono state sviluppate le strutture dati utilizzate per rappresentare la rete bayesiana, ora descritte più dettagliatamente nelle sezioni [Network](#Network) e [Variable](#Variable).
 
-### [obsoleto] ~~Fase 2:~~ calcolo della probabilità marginale (enumerazione completa)
+Alcune scelte implementative:
 
-- Abbiamo adesso le strutture per rappresentare il network e le CPT.
-- Abbiamo una funzione (**getJointProbability**) che dato un assignment completo ci da la probabilità congiunta di quella specifica configuazione (es. *p(a=false, b=true, c=true...)*)
-- Adesso dobbiamo creare la funzione che marginalizza la probabilità (es. *p(b=true)*) per **enumerazione completa**, cioè calcolando la probabilità (congiunte) di tutte le configurazioni complete *rilevanti* (cioè, per esempio, in cui *b=true*) e sommandole.
-- La probabilità marginale sarà calcolata dalla funzione **getMarginalProbability** che prende in input due stringhe: il nome di una variabile target e il nome del suo valore (es. `getMarginalProbability("b", "true")`).
-    - **getMarginalProbability** trova innanzitutto l'ID della variabile target e del valore assegnato
-    - crea un array assignment che è inizializzato tutto ad un valore dummy (-1) tranne per l'elemento corrispondente alla variabile target, che inizializzato al valore assegnato (es. true)
-    - a questo punto viene chiamata la funzione ricorsiva **marginalRecursive** che prende in input l'ID di una variabile da processare e un assignment completo
-- Fatto un test per controllare che le probabilità marginali siano correttamente normalizzate (si veda **Test::marginal()**).
+- gli ID, le righe della tabella CPT e gli indici di ogni genere sono rappresentati come interi (tipo standard `int`), non è stato necessario utilizzare gli interi a 64 bit;
+- è stato aggiunto in seguito lo `static_cast<int>` quando risultati di tipo `size_t` venivano confrontati con interi standard (link ai commit [1](https://github.com/fbardari/BayesianNetworks/commit/d571b292bb5e1565bd8b939254def86c7f6a647f) [2](https://github.com/fbardari/BayesianNetworks/commit/9cf37e70042eb91d3d358ed6e795095c29c3882f)).
 
-#### [obsoleto] Funzionamento dell'algoritmo ricorsivo di marginalizzazione
-- Stato iniziale: viene creato un vettore assignment inizializzato a -1 (ad eccezione della variabile target). La ricorsione parte dalla variabile con id=0.
-    - Caso id=n -> il vettore assignment è completo, restituiamo la probabilità congiunta di quella specifica combinazione.
-    - Caso assigment[id] != -1 -> quella variabile è l'evidenza oppure il valore è già fissato, saltiamo e chiamiamo ricorsivamente la funzione per la variabile "id+1"
-    - Caso assigment[id] == -1 -> ciclo sui possibili valori che la variabile può assumere, sommando tutte le probabilità (per i diversi valori delle altre variabili) chiamando ricorsivamente la funzione.
-- **Nota sulla complessità computazionale dell'algoritmo**:
-    - *punto di debolezza*: la complessità temporale è esponenziale, per ognuna delle n variabili l'algoritmo deve esplorare K^(n-1) configurazioni -> complessità o(n * K^n) (dove K è il numero di valori possibili)
-    - *punto di forza*: basso consumo di memoria, infatti l'algoritmo riutilizza lo stesso vettore di assignment, passato nelle chiamate ricorsive per riferimento: la memoria è occupata unicamente da questo vettore e dalla probabilità, generando una complessità spaziale lineare o(n).
+### [metodo abbandonato] ~~Fase 2:~~ calcolo della probabilità marginale (enumerazione completa)
 
-### Fase 2bis: ottimizzazione del calcolo della probabilità marginale
-- **PROBLEMA**: l'algoritmo ricorsivo dell'approccio utilizzato fin'ora prova tutte le combinazioni possibili di tutte le variabili della rete, anche quelle che non c'entrano niente con la variabile target. -> **SOLUZIONE**: considerare solo gli antenati (i figli e i rami scollegati non servono nel calcolo, sommando i contributi fanno 1).
-    - Esempio: p(b=true) con b che dipende solo da a, lavoro solo su a, invece che su tutte le variabili della rete.
-    - Aggiungo un metodo privato **getAncestors(variableId)**, che restituisce l'insieme degli ID antenati di una variabile (genitori, genitori dei genitori, ...), tramite una visita del grafo all'indietro seguendo `Variable::parents`.
-    - In **getMarginalProbability**, calcolo l'insieme delle variabili rilevanti (target e tutti i suoi antenati), e filtro `topologicalOrder` mantenendo solo gli ID rilevanti (nell'ordine già corretto).
-- Processerò le variabili una alla volta seguendo l'ordine topologico, già implementato nella classe Network.
-    - Elimino la ricorsione esplicita (**marginalRecursive**) e la sostituisco con un ciclo.
-    - Mantengo una lista di **stati parziali**: coppie (assignment parziale, probabilità accumulata). Parto da un solo stato: target fissato al valore richiesto, probabilità 1.0.
-    - Per ognuna delle variabili rilevanti (ordinate secondo ordinamento topologico):
-        - se la variabile è già fissata (il target): moltiplico la probabilità di ogni stato per il fattore CPT corrispondente al valore fissato;
-        - se la variabile non è ancora fissata: sdoppio ogni stato esistente in tante copie quanti sono i valori possibili della variabile, moltiplicando ciascuna copia per il fattore CPT corrispondente (i genitori sono già assegnati, essendo rispettato l'ordine topologico).
-    - Al termine del ciclo, sommo le probabilità di tutti gli stati rimasti: è il risultato della marginale cercata.
-    - **Vantaggio**: no ricorsione, no stack di chiamate; il numero di variabili processate è ridotto ai soli antenati rilevanti invece che a tutte le n variabili della rete.
-    - Complessità rimane esponenziale nel numero *m* di variabili *rilevanti* -> O(m * K^m)).
+Si rimanda al file [design_old](./design_old.md) per l'algoritmo di enumerazione completa per ricorrenza, abbandonato in quanto di complessità esponenziale nel numero complessivo di *variabili*, anziché nel numero di *variabili rilevanti* (-> sezione successiva).
+
+### [nuovo metodo] Fase 2: ottimizzazione del calcolo della probabilità marginale
+
+In seguito è stato riscritto l'algoritmo ([link al commit](https://github.com/fbardari/BayesianNetworks/commit/29ee02c8bba7f765bb104447b1e25b22a21b93ae)), abbandonando la ricorsione, e utilizzando l'approccio descritto ora nella sezione [Metodi per il calcolo delle probabilità](#Network).
 
 ### Fase 3: parsing file BIF
 
-- In generale, il modulo Parser deve contenere una funzione del tipo **importBIF(filePath)** che dato il pecorso di un file BIF restituisce l'oggetto di tipo Network costruito secondo i dati trovati nel file.
+È stato costruito il Parser nelle seguenti fasi:
+1. inizialmente soltanto la struttura base del ciclo in parse() [link al commit](https://github.com/fbardari/BayesianNetworks/commit/6720b6e32812cb732b97a3221475ca8dd57edbac);
+2. poi il parsing del blocco variable (https://github.com/fbardari/BayesianNetworks/commit/128de88d3c1d98f6b597189349983ecc7742a22c);
+3. infine il parsing del blocco probability [link al commit]()
+    - separate in seguito le funzioni che fanno parsing del sottoblocchi che compongono il blocco "probability" per migliorare la leggibilità del codice (link ai commit più significativi [1](https://github.com/fbardari/BayesianNetworks/commit/7a529eced4a21e8935495d131ccd5b2d9cecd230) [2](https://github.com/fbardari/BayesianNetworks/commit/1aa6e0342fbd4c7e1aaa5989621eca9d7dbb995e)).
 
-- Implementerò una classe **Parser** che contiene nel suo stato interno:
-    - la stringa **filename** (percorso del file bif importato);
-    - l'oggetto di tipo *fstream* di nome **file**;
-    - la mappa id (che associa nome -> id) e il vettore variables, che contiene le variabili che andranno a costruire il network;
-    - la variabile booleana "**log**" che, quando è settata su true, fa stampare a schermo i log del parsing.
-- Il costruttore prenderà in input il nome del file e il valore di log.
-- Il metodo **parse()** costruisce e restituisce il Network che si trova al file specificato da filename
-    - utilizzerà tre funzioni helper di tipo void che effettueranno il parsing dei 3 blocchi presenti nei files BIF: network, variables, probability;
-    - riempirà opportunamente la mappa **id** e l'array **variables**
-    - salverà i risultati in un oggetto di tipo Network e lo restituirà in output.
-- Il metodo *static* **importBIF()** permetterà di ottenere automaticamente il Network senza dover costruire manualmente l'istanza della classe.
+Per testare il corretto funzionamento del Parser è stato confrontato il network ottenuto facendo parsing dal file gradient.bif con quello generato manualmente a partire dalla stessa rete ([link al commit](https://github.com/fbardari/BayesianNetworks/commit/eb287db0620f5b6718b4cd068056182481b2e378)).
+
+La descrizione dettagliata del Parser si trova adesso nella sezione [Parser](#Parser).
 
 ### Fase 4: probabilità condizionale
 
