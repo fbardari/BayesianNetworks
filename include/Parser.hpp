@@ -25,7 +25,8 @@ std::string s;
 // helper per riconoscere i delimitatori
 inline bool isDelimiter(char c) {
     return c == ',' || c == ';' || c == '|' ||
-           c == '(' || c == ')' || c == '{' || c == '}' || c == '"';
+           c == '(' || c == ')' || c == '{' || c == '}' || c == '"' ||
+           c == '[' || c == ']';
 }
 
 // helper per riconoscere spazio + tab + a capo

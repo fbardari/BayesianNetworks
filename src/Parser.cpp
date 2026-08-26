@@ -92,7 +92,25 @@ void Parser::parseVariable() {
 
     if (log) std::cout << "Parser::parseVariable: trovata variabile \'" << variableName << "\', assegnato ID=" << variableId << "\n";
 
-    while(nextToken() && s != "{");
+    while (nextToken() && s != "type" && s != "}");
+
+    if (s != "type") {
+        throw std::invalid_argument("Parser::parseVariable: la variabile " + variableName + "' non ha il token 'type'!");
+    }
+
+    nextToken(); // leggo cosa c'è dopo "type"
+    if (s == "discrete") {
+        if (log) std::cout << "Parser::parseVariable: rete di tipo \"discrete\", ok :)\n";
+    } else {
+        throw std::invalid_argument("Parser::parseVariable: la variabile non è di tipo \"discrete\"!");
+    }
+
+    while(nextToken() && s != "["); // aspetto "[" per numero di valori
+
+    nextToken();
+    int num_expected_values = std::stoi(s);
+    if (log) std::cout << "Parser::parseVariable: attesi N=" << num_expected_values << " valori\n";
+
     while(nextToken() && s != "{"); // aspetto la seconda "{" per la lista variabili
 
     std::string value;
@@ -102,6 +120,10 @@ void Parser::parseVariable() {
         if (log) std::cout << "Parser::parseVariable: trovato valore \'" << value << "\'\n";
 
         newVariable.values.push_back(value);
+    }
+
+    if (num_expected_values != static_cast<int>(newVariable.values.size())) {
+        throw std::runtime_error("Parser::parseVariable: errore nel parsing della variabile " + newVariable.name + ": il numero di valori indicati nel blocco \'variable\' non corrisponde con quelli effettivamente trovati.");
     }
 
     // aggiungo nuova variabile a variables
