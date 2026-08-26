@@ -210,7 +210,7 @@ Di seguito la descrizione di altri metodi pubblici della classe Network che NON 
 
 ### Parser
 
-#### Stato interno
+#### Stato interno
 
 Il **`Parser`** è definito come una classe il cui stato interno comprende:
 - la stringa `filename`: il percorso del file BIF che il Parser sta leggendo;
