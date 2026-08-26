@@ -250,11 +250,11 @@ Alcune scelte implementative:
 - gli ID, le righe della tabella CPT e gli indici di ogni genere sono rappresentati come interi (tipo standard `int`), non è stato necessario utilizzare gli interi a 64 bit;
 - è stato aggiunto in seguito lo `static_cast<int>` quando risultati di tipo `size_t` venivano confrontati con interi standard (link ai commit [1](https://github.com/fbardari/BayesianNetworks/commit/d571b292bb5e1565bd8b939254def86c7f6a647f) [2](https://github.com/fbardari/BayesianNetworks/commit/9cf37e70042eb91d3d358ed6e795095c29c3882f)).
 
-### [metodo abbandonato] ~~Fase 2:~~ calcolo della probabilità marginale (enumerazione completa)
+### [algoritmo abbandonato] ~~Fase 2:~~ calcolo della probabilità marginale (somma su tutte le variabili)
 
 Si rimanda al file [design_old.md](./design_old.md) per l'algoritmo di enumerazione completa per ricorrenza, abbandonato in quanto di complessità esponenziale nel numero complessivo di *variabili*, anziché nel numero di *variabili rilevanti* (-> sezione successiva).
 
-### [nuovo metodo] Fase 2: ottimizzazione del calcolo della probabilità marginale
+### [nuovo algoritmo] Fase 2: calcolo della probabilità marginale (somma solo sulle variabili antenate)
 
 In seguito è stato riscritto l'algoritmo ([link al commit](https://github.com/fbardari/BayesianNetworks/commit/29ee02c8bba7f765bb104447b1e25b22a21b93ae)), abbandonando la ricorsione, e utilizzando l'approccio descritto ora nella sezione [Metodi per il calcolo delle probabilità](#Network).
 
@@ -262,8 +262,8 @@ In seguito è stato riscritto l'algoritmo ([link al commit](https://github.com/f
 
 È stato costruito il Parser nelle seguenti fasi:
 1. inizialmente soltanto la struttura base del ciclo in parse() [link al commit](https://github.com/fbardari/BayesianNetworks/commit/6720b6e32812cb732b97a3221475ca8dd57edbac);
-2. poi il parsing del blocco variable (https://github.com/fbardari/BayesianNetworks/commit/128de88d3c1d98f6b597189349983ecc7742a22c);
-3. infine il parsing del blocco probability [link al commit]()
+2. poi il parsing del blocco variable [link al commit](https://github.com/fbardari/BayesianNetworks/commit/128de88d3c1d98f6b597189349983ecc7742a22c);
+3. infine il parsing del blocco probability [link al commit](https://github.com/fbardari/BayesianNetworks/commit/3345a60551bd36e12bd61206627a5412652c2b8c)
     - separate in seguito le funzioni che fanno parsing del sottoblocchi che compongono il blocco "probability" per migliorare la leggibilità del codice (link ai commit più significativi [1](https://github.com/fbardari/BayesianNetworks/commit/7a529eced4a21e8935495d131ccd5b2d9cecd230) [2](https://github.com/fbardari/BayesianNetworks/commit/1aa6e0342fbd4c7e1aaa5989621eca9d7dbb995e)).
 
 Per testare il corretto funzionamento del Parser è stato confrontato il network ottenuto facendo parsing dal file gradient.bif con quello generato manualmente a partire dalla stessa rete ([link al commit](https://github.com/fbardari/BayesianNetworks/commit/eb287db0620f5b6718b4cd068056182481b2e378)).
