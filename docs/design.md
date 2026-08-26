@@ -250,13 +250,11 @@ Alcune scelte implementative:
 - gli ID, le righe della tabella CPT e gli indici di ogni genere sono rappresentati come interi (tipo standard `int`), non è stato necessario utilizzare gli interi a 64 bit;
 - è stato aggiunto in seguito lo `static_cast<int>` quando risultati di tipo `size_t` venivano confrontati con interi standard (link ai commit [1](https://github.com/fbardari/BayesianNetworks/commit/d571b292bb5e1565bd8b939254def86c7f6a647f) [2](https://github.com/fbardari/BayesianNetworks/commit/9cf37e70042eb91d3d358ed6e795095c29c3882f)).
 
-### [algoritmo abbandonato] ~~Fase 2:~~ calcolo della probabilità marginale (somma su tutte le variabili)
+### Fase 2 calcolo della probabilità marginale (somma su tutte le variabili)
 
-Si rimanda al file [design_old.md](./design_old.md) per l'algoritmo di enumerazione completa per ricorrenza, abbandonato in quanto di complessità esponenziale nel numero complessivo di *variabili*, anziché nel numero di *variabili rilevanti* (-> sezione successiva).
+Si rimanda al file [design_old.md](./design_old.md) per la descrizione algoritmo di enumerazione completa per ricorrenza usato inizialmente, poi abbandonato in quanto di complessità esponenziale nel numero complessivo di *variabili*, anziché nel numero di *variabili rilevanti* (-> sezione successiva).
 
-### [nuovo algoritmo] Fase 2: calcolo della probabilità marginale (somma solo sulle variabili antenate)
-
-In seguito è stato riscritto l'algoritmo ([link al commit](https://github.com/fbardari/BayesianNetworks/commit/29ee02c8bba7f765bb104447b1e25b22a21b93ae)), abbandonando la ricorsione, e utilizzando l'approccio descritto ora nella sezione [Metodi per il calcolo delle probabilità](#Network).
+L'algoritmo è stato quindi riscritto ([link al commit](https://github.com/fbardari/BayesianNetworks/commit/29ee02c8bba7f765bb104447b1e25b22a21b93ae)), abbandonando la ricorsione, e utilizzando l'approccio adesso descritto dettagliatamente nella sezione [Metodi per il calcolo delle probabilità](#Network).
 
 ### Fase 3: parsing file BIF
 
