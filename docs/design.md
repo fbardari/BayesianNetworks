@@ -97,7 +97,7 @@ Di seguito la descrizione dei metodi che modificano lo stato interno della class
         - quando un figlio non ha più genitori da processare, viene inserito nella coda
         - se al termine non sono stati elaborati tutti i nodi, la rete contiene un ciclo -> in quel caso solleva un'eccezione
         - se sono stati elaborati tutti i nodi -> salva il risultato in `topologicalOrder`
-    - **complessità**: il for iniziale ha complessità lineare O(n_nodi) nel numero di nodi, il ciclo while ha complessità lineare O(n_archi) nel numero di archi (per ogni nodo, un for processa tutti i genitori) -> complessità totale O(n_nodi + n_archi)
+    - **complessità**: il for iniziale ha complessità lineare O(n_nodi) nel numero di nodi, il ciclo while ha complessità lineare O(n_archi) nel numero di archi (per ogni nodo, un for processa tutti i figli) -> complessità totale O(n_nodi + n_archi)
 
 - **costruttore - default** `Network()`  
     - **cosa fa**: crea una rete vuota.
@@ -237,7 +237,7 @@ Il namespace `Test` contiene alcune funzioni utili per verificare il corretto fu
 - `Test::exampleNetwork()` restituisce la rete del file gradient.bif, creata manualmente (funzione utilizzata per verificare il corretto funzionamento del parser);
 - `Test::normalized(network)` restituisce true solo se tutte le probabilità marginali del network in input sono normalizzate a 1.0 (a meno del machine epsilon).
 
-## Fasi di sviluppo
+## Fasi di sviluppo
 
 Si rimanda al file [todo.md](./todo.md) per la checklist dei passaggi fondamentali nelle fasi di sviluppo.
 
@@ -248,7 +248,7 @@ In questa fase sono state sviluppate le strutture dati utilizzate per rappresent
 Alcune scelte implementative:
 
 - gli ID, le righe della tabella CPT e gli indici di ogni genere sono rappresentati come interi (tipo standard `int`), non è stato necessario utilizzare gli interi a 64 bit;
-- è stato aggiunto in seguito lo `static_cast<int>` quando risultati di tipo `size_t` venivano confrontati con interi standard (link ai commit [1](https://github.com/fbardari/BayesianNetworks/commit/d571b292bb5e1565bd8b939254def86c7f6a647f) [2](https://github.com/fbardari/BayesianNetworks/commit/9cf37e70042eb91d3d358ed6e795095c29c3882f)).
+- è stato aggiunto in seguito lo `static_cast<int>` quando risultati di tipo `size_t` venivano confrontati con interi standard (link ai commit [1](https://github.com/fbardari/BayesianNetworks/commit/d571b292bb5e1565bd8b939254def86c7f6a647f) [2](https://github.com/fbardari/BayesianNetworks/commit/9cf37e70042eb91d3d358ed6e795095c29c3882f)) come da standard C++.
 
 ### Fase 2 calcolo della probabilità marginale (somma su tutte le variabili)
 
