@@ -270,10 +270,10 @@ Per testare il corretto funzionamento del Parser è stato confrontato il network
 
 La descrizione dettagliata del Parser si trova adesso nella sezione [Parser](#Parser).
 
-#### Parser migliorato
+#### Importante modifica nella lettura token
 
 Inizialmente la lettura dei token (commits sezione precedente) era troppo poco intelligente; i token venivano letti usando `file >> s` e poi puliti dei caratteri di delimitazione, quindi il Parser si sarebbe facilmente confuso se i token non fosse apparsi come previsto. Per esempio se un token fosse comparso non distanziato da un delimitatore (ad esempio `0.4,0.6;` anziché `0.4, 0.6;`), avrebbe visto le due probabilità come un unico token, ripulito la stringa dei delimitatori (-> `0.40.6`!) e avrebbe fallito.
-Ho quindi rimosso *cleanString()* e abbandonato l'utilizzo indiscriminato di `file >> s` come strumento di lettura dei token, introducendo usare un metodo più intelligente `nextToken()` che separi correttamente i token non spaziati e i delimitatori (leggendo i token carattere per carattere, e appoggiandosi agli helper `isWhitespace(char)` e `isDelimiter(c)`).
+Ho quindi rimosso *cleanString()* e abbandonato l'utilizzo indiscriminato di `file >> s` come strumento di lettura dei token, introducendo usare un metodo più intelligente `nextToken()` che separi correttamente i token non spaziati e i delimitatori (leggendo i token carattere per carattere, e appoggiandosi agli helper `isWhitespace(char)` e `isDelimiter(c)`). [link al commit](https://github.com/fbardari/BayesianNetworks/commit/076a915ce1af3d25ceaa64b4e916ea360951bd4b)
 
 ### Fase 4: probabilità condizionale
 
