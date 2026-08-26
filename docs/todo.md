@@ -14,6 +14,7 @@
     - [x] deve essere capace di leggere i blocchi variable
     - [x] e di popolare le tabelle CPT leggendo i blocchi probability
     - ~~[ ] TODO: migliorare firma della funzione helper **Parser::getCptRow()**, non necessario che sia static, non necessario passaggio per riferimento~~ *rimossa inutile complicazione*
+    - [ ] TODO: rimuovere `file >> s` per lettura dei token, scrivere una funzione `nextToken()` che separi correttamente i token non spaziati
 5. [x] eventuale interfaccia utente
 6. [ ] probabilità condizionale
 7. [ ] variable elimination

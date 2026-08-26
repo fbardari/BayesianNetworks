@@ -270,6 +270,14 @@ Per testare il corretto funzionamento del Parser è stato confrontato il network
 
 La descrizione dettagliata del Parser si trova adesso nella sezione [Parser](#Parser).
 
+#### Problemi
+
+L'attuale versione del Parser è troppo poco intelligente: si confonde molto facilmente se i token non appaiono come previsto.
+Per esempio se un token dovesse comparire non distanziato da un delimitatore (ad esempio `0.4,0.6;` anziché `0.4, 0.6;`), l'attuale versione vedrebbe le due probabilità come un unico token e fallirebbe.
+Quindi il prossimo to do è rivedere la logica di cleanString() introducendo attivamente una lettura dei delimitatori, che per ora nella maggior parte dei casi sono trattati come semplice rumore da rimuovere (problema: il parser attuale si fida ciecamente della struttura del file BIF, non controlla per esempio che la struttura colonne/righe sia corrispondente a quanto atteso).
+
+Il modo in cui intendo procedere è abbandonare l'utlizzo di `file >> s` come strumento di lettura dei token, ma introdurre usare una funzione più intelligente `nextToken()` che separi correttamente i token non spaziati.
+
 ### Fase 4: probabilità condizionale
 
 ...
