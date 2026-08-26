@@ -30,7 +30,7 @@ Estensioni / moduli aggiuntivi (da valutare più avanti):
 
 ## Descrizione dettagliata dei moduli
 
-### Variable.hpp
+### Variable
 
 La struct **`Variable`** rappresenta i singoli nodi (variabili casuali discrete) che costituiscono la rete bayesiana:
 - `name`: nome della variabile;
@@ -58,7 +58,7 @@ La struct **`Variable`** rappresenta i singoli nodi (variabili casuali discrete)
 
     Il metodo `getCptRow(assignment)` (descritto nelle sezioni successive) permette di ricavare la riga dato un assignment dei valori seguendo questa convenzione.
 
-### Network.hpp
+### Network
 
 La classe **`Network`** rappresenta la rete bayesiana e fornisce le funzioni per i calcoli delle probabilità marginali e congiunte.
 
@@ -207,6 +207,49 @@ Di seguito la descrizione di altri metodi pubblici della classe Network che NON 
 5. [x] eventuale interfaccia utente
 6. [ ] probabilità condizionale
 7. [ ] variable elimination
+
+### Parser
+
+#### Stato interno
+
+Il **`Parser`** è definito come una classe il cui stato interno comprende:
+- la stringa `filename`: il percorso del file BIF che il Parser sta leggendo;
+- l'oggetto di tipo `std::fstream` "`file`";
+- la stringa `s` con la quale i metodi in cui si smista il parsing salvano e si passano l'ultimo token letto;
+- la variabile booleana `log` con la quale decidiamo se printare il log durante il parsing (utilizzato durante lo sviluppo per vedere a colpo d'occhio eventuali bug nella lettura dei token).
+
+Contiene inoltre la unordered map (string -> int) `id` e il vettore di variabili `variables`, che andranno a costruire il nuovo oggetto di tipo Network una volta completato il parsing.
+
+#### Funzionamento del parsing
+
+Il metodo pubblico **`parse()`** avvia il parsing sul file BIF indicato in `filename`, restituendo l'oggetto di tipo Network costruito con i dati letti.
+
+Contiene un ciclo for che legge token dal file finché il file non è terminato, rimuovendo dalla stringa i caratteri speciali con la funzione helper `cleanString()`.
+Quando la stringa letta corrisponde a una delle intestazioni dei blocchi (network, variable o probability) -> avvia il ciclo corrispondente:
+- parseNetwork();
+- parseVariable(): legge le variabili e inizia a riempire il vettore `variables`;
+- parseProbability(): legge, per ogni blocco probability, i genitori della variabile e la tabella CPT, chiamando i metodi opportuni come indicato di seguito:
+    ```
+    Parser::parse()
+    ├── parseNetwork()
+    ├── parseVariable()
+    └── parseProbability()
+        ├── readProbabilityChild()
+        ├── readParents()
+        └── readCptTable()
+            ├── readCptTableNoParents()
+            └── readCptRows()
+                └── getCptRow()
+    ```
+- `getCptRow()` viene utilizzata per assegnare ogni valore alla riga corretta della tabella CPT, coerentemente con la convenzione decisa precedentemente.
+
+#### Accesso dall'esterno
+
+- Il metodo statico `Parser::importBIF(filename, log)` crea localmente un parser usa e getta che legge il file indicato in input e restituisce l'oggetto di tipo Network corrispondente.
+
+### Utilities
+
+...
 
 ### Dettagli minori
 
