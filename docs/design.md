@@ -204,7 +204,7 @@ Contiene inoltre la unordered map (string -> int) `id` e il vettore di variabili
 
 Il metodo pubblico **`parse()`** avvia il parsing sul file BIF indicato in `filename`, restituendo l'oggetto di tipo Network costruito con i dati letti.
 
-Contiene un ciclo for che legge token dal file finché il file non è terminato, rimuovendo dalla stringa i caratteri speciali con la funzione helper `cleanString()`.
+Contiene un ciclo for che legge token dal file finché il file non è terminato, che si appoggia alla funzione helper `nextToken()` che legge carattere per carattere separando correttaemnte i token anche quando questi siano non spaziati dai delimitatori.
 Quando la stringa letta corrisponde a una delle intestazioni dei blocchi (network, variable o probability) -> avvia il ciclo corrispondente:
 - parseNetwork();
 - parseVariable(): legge le variabili e inizia a riempire il vettore `variables`;
@@ -270,13 +270,10 @@ Per testare il corretto funzionamento del Parser è stato confrontato il network
 
 La descrizione dettagliata del Parser si trova adesso nella sezione [Parser](#Parser).
 
-#### Problemi
+#### Parser migliorato
 
-L'attuale versione del Parser è troppo poco intelligente: si confonde molto facilmente se i token non appaiono come previsto.
-Per esempio se un token dovesse comparire non distanziato da un delimitatore (ad esempio `0.4,0.6;` anziché `0.4, 0.6;`), l'attuale versione vedrebbe le due probabilità come un unico token e fallirebbe.
-Quindi il prossimo to do è rivedere la logica di cleanString() introducendo attivamente una lettura dei delimitatori, che per ora nella maggior parte dei casi sono trattati come semplice rumore da rimuovere (problema: il parser attuale si fida ciecamente della struttura del file BIF, non controlla per esempio che la struttura colonne/righe sia corrispondente a quanto atteso).
-
-Il modo in cui intendo procedere è abbandonare l'utlizzo di `file >> s` come strumento di lettura dei token, ma introdurre usare una funzione più intelligente `nextToken()` che separi correttamente i token non spaziati.
+Inizialmente la lettura dei token (commits sezione precedente) era troppo poco intelligente; i token venivano letti usando `file >> s` e poi puliti dei caratteri di delimitazione, quindi il Parser si sarebbe facilmente confuso se i token non fosse apparsi come previsto. Per esempio se un token fosse comparso non distanziato da un delimitatore (ad esempio `0.4,0.6;` anziché `0.4, 0.6;`), avrebbe visto le due probabilità come un unico token, ripulito la stringa dei delimitatori (-> `0.40.6`!) e avrebbe fallito.
+Ho quindi rimosso *cleanString()* e abbandonato l'utilizzo indiscriminato di `file >> s` come strumento di lettura dei token, introducendo usare un metodo più intelligente `nextToken()` che separi correttamente i token non spaziati e i delimitatori (leggendo i token carattere per carattere, e appoggiandosi agli helper `isWhitespace(char)` e `isDelimiter(c)`).
 
 ### Fase 4: probabilità condizionale
 

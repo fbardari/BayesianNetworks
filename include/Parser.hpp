@@ -22,10 +22,23 @@ std::vector<Variable> variables; // variabili che costituiranno il network
 // stringa letta nel file
 std::string s;
 
-/* pulisce la string "s"
-    rimuovendo i caratteri presenti nei file BIF
-    che non contengono dati */ 
-void cleanString();
+// helper per riconoscere i delimitatori
+inline bool isDelimiter(char c) {
+    return c == ',' || c == ';' || c == '|' ||
+           c == '(' || c == ')' || c == '{' || c == '}' || c == '"';
+}
+
+// helper per riconoscere spazio + tab + a capo
+inline bool isWhitespace(char c) {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+/*
+ripulisce s, legge prossimo token, salva in s
+-> true se trovato, false a fine file
+*/
+bool nextToken();
+
 
 // parsing dei blocchi di un file BIF
 void parseNetwork();

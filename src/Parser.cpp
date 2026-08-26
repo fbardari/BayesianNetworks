@@ -4,11 +4,37 @@
 #include <iostream>
 #include <algorithm>
 
-void Parser::cleanString() {
-    for (char c : ",;()[]{}\"") {
-        s.erase(std::remove(s.begin(), s.end(), c), s.end());
+bool Parser::nextToken() {
+    s.clear(); // pulisco s
+    char c;
+
+    // salto spazio
+    while (file.get(c)) {
+        if (isWhitespace(c)) continue;
+        break;
     }
+
+    if (!file) return false; // end of file
+
+    // se è un delimitatore, il token è il singolo carattere
+    if (isDelimiter(c)) {
+        s = std::string(1, c);
+        return true;
+    }
+
+    // altrimenti accumulo caratteri finché non trovo spazio o delimitatore
+    s += c;
+    while (file.get(c)) {
+        if (isWhitespace(c) || isDelimiter(c)) {
+            file.unget(); // rimetto il carattere nello stream, sarà letto dopo
+            break;
+        }
+        s += c;
+    }
+
+    return true;
 }
+
 
 Parser::Parser (const std::string& filename, bool log)
     : filename(filename), log(log) {}
@@ -25,8 +51,7 @@ Network Parser::parse() {
     // eccezione se non riesci ad aprire il file
     if (!file.is_open()) throw std::runtime_error("Parser::parse: impossibile aprire il file");
 
-    while (file >> s) {
-        cleanString();
+    while (nextToken()) {
 
         if (log) std::cout << "Parser::parse: loop principale, letto token \'" << s << "\'\n";
 
@@ -44,18 +69,16 @@ Network Parser::parse() {
 }
 
 void Parser::parseNetwork() {
-    while (file >> s) {
-        cleanString();
-        if (s.empty()) break;
+    while (nextToken()) {
+        if (s == "}") break;
         if (log) std::cout << "Parser::parseNetwork: letto token \'" << s << "\'\n";
     }
 }
 
 void Parser::parseVariable() {
-    file >> s; // leggo nome variabile
-    cleanString();
-
+    nextToken(); // leggo nome variabile
     std::string variableName = s; // salvo nome variabile
+
     int variableId = static_cast<int>(variables.size()); // assegno ID disponibile
     id[variableName] = variableId;
 
@@ -69,12 +92,12 @@ void Parser::parseVariable() {
 
     if (log) std::cout << "Parser::parseVariable: trovata variabile \'" << variableName << "\', assegnato ID=" << variableId << "\n";
 
-    while(file >> s && s != "{");
-    while(file >> s && s != "{"); // aspetto la seconda "{" per la lista variabili
+    while(nextToken() && s != "{");
+    while(nextToken() && s != "{"); // aspetto la seconda "{" per la lista variabili
 
     std::string value;
-    while (file >> s && s != "};") {
-        cleanString();
+    while (nextToken() && s != "}") {
+        if(s == ",") continue;
         value = s;
         if (log) std::cout << "Parser::parseVariable: trovato valore \'" << value << "\'\n";
 
@@ -101,9 +124,9 @@ void Parser::parseProbability() {
 }
 
 int Parser::readProbabilityChild() {
-    while (file >> s) { // vado avanti finché non trovo il nome della variabile
-        cleanString();
-        if (s != "") break;
+    while (nextToken()) { // vado avanti finché non trovo il nome della variabile
+        if (s == "(") continue;
+        break;
     }
 
     std::string childName = s;
@@ -115,13 +138,12 @@ int Parser::readProbabilityChild() {
 }
 
 void Parser::readParents(int childId) {
-    while (file >> s) {
+    while (nextToken()) {
         if (s == "|") { // ci sono genitori
             if (log) std::cout << ", ha genitori:";
 
-            while (file >> s && s != "{" && s != ")") { // ciclo su tutti i genitori
-                cleanString();
-                if (s.empty()) continue;
+            while (nextToken() && s != "{" && s != ")") { // ciclo su tutti i genitori
+                if (s == ",") continue;
 
                 std::string parentName = s;
                 int parentId = id[parentName];
@@ -141,9 +163,8 @@ void Parser::readParents(int childId) {
 }
 
 void Parser::readCptTable(int childId) {
-    while (file >> s) {
-        cleanString();
-        if (s.empty()) continue;
+    while (nextToken()) {
+        if (s == "{") continue;
 
         if (s == "table") {
             readCptTableNoParents(childId);
@@ -157,9 +178,8 @@ void Parser::readCptTable(int childId) {
 void Parser::readCptTableNoParents(int childId) {
     if (log) std::cout << "Parser::parseProbability: salvate probabilità";
 
-    while (file >> s && s != "}") {
-        cleanString();
-        if (s.empty()) continue;
+    while (nextToken() && s != "}") {
+        if (s == "," || s == ";") continue;
 
         double prob = std::stod(s);
         variables[childId].CPT[0].push_back(prob);
@@ -185,11 +205,8 @@ void Parser::readCptRows(int childId) {
 
         // ciclo su ogni valore genitore della riga
         for (int i = 0; i < numParents; i++) {
-            cleanString();
-            while (s.empty()) {
-                file >> s;
-                cleanString();
-            }
+            nextToken();
+            while (s == "(" || s == "," || s == ";") nextToken();
 
             std::string valueName = s;
             int parentId = variables[childId].parents[i];
@@ -203,9 +220,7 @@ void Parser::readCptRows(int childId) {
             }
             partialAssignment[parentId] = valueId;
 
-            if (log) std::cout << " " << valueName << "(parentId=" << valueId << ",valueId=" << valueId << ")";
-
-            file >> s;
+            if (log) std::cout << " " << valueName << "(parentId=" << parentId << ",valueId=" << valueId << ")";
         }
         if (log) std::cout << std::endl;
 
@@ -215,18 +230,14 @@ void Parser::readCptRows(int childId) {
 
         // ciclo su ogni probabilità della riga
         for (int i = 0; i < numValues; i++) {
-            cleanString();
-            while (s.empty()) {
-                file >> s;
-                cleanString();
-            }
+            nextToken();
+            while (s == ")" || s == "," || s == ";") nextToken();
 
             double prob = std::stod(s);
             if (log) std::cout << " " << prob;
 
             variables[childId].CPT[cptRow].push_back(prob);
 
-            file >> s;
         }
         if (log) std::cout << std::endl;
     }
