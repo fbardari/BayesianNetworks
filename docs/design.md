@@ -249,7 +249,13 @@ Quando la stringa letta corrisponde a una delle intestazioni dei blocchi (networ
 
 ### Utilities
 
-...
+L'header `Utilities.hpp` contiene gli overload dell'operatore <<, per permettere di fare print di vettori e matrici.
+
+### Test
+
+Il namespace `Test` contiene alcune funzioni utili per verificare il corretto funzionamento del programma:
+- `Test::exampleNetwork()` restituisce la rete del file gradient.bif, creata manualmente (funzione utilizzata per verificare il corretto funzionamento del parser);
+- `Test::normalized(network)` restituisce true solo se tutte le probabilità marginali del network in input sono normalizzate a 1.0 (a meno del machine epsilon).
 
 ### Dettagli minori
 
