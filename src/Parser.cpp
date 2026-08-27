@@ -146,10 +146,7 @@ void Parser::parseProbability() {
 }
 
 int Parser::readProbabilityChild() {
-    while (nextToken()) { // vado avanti finché non trovo il nome della variabile
-        if (s == "(") continue;
-        break;
-    }
+    while (nextToken() && s == "("); // salto eventuali parentesi, attendendo nome variabile
 
     std::string childName = s;
     int childId = id[childName];
