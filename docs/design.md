@@ -237,26 +237,17 @@ Quando la stringa letta corrisponde a una delle intestazioni dei blocchi (networ
     }
     ```
 - Nell'elenco di valori possibili, come anche nelle tabelle CPT, sono supportati come delimitatori tutti quelli indicati nella documentazione (inclusi: `,`,`|`,`\t`,`\n`, `\r`).
-    - Quindi ad esempio, il blocco:
+    - Quindi ad esempio, la riga:
         ```
-        probability (c | a) {
         (true) 0.6, 0.4;
-        (false) 0.2, 0.8;
-        }
         ```
-        è equivalente al blocco:
+        è equivalente alla riga:
         ```
-        probability (c | a) {
         (true) 0.6 | 0.4;
-        (false) 0.2 | 0.8;
-        }
         ```
-        o al blocco:
+        oppure:
         ```
-        probability (c | a) {
         (true) 0.6 0.4;
-        (false) 0.2 0.8;
-        }
         ```
         etc.
 
