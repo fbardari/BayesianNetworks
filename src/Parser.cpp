@@ -165,7 +165,7 @@ void Parser::readParents(int childId) {
             if (log) std::cout << ", ha genitori:";
 
             while (nextToken() && s != "{" && s != ")") { // ciclo su tutti i genitori
-                if (s == "," || s == "|" || s == "\t" || s == "\n" || s == "\r") continue;
+                if (s == "," || s == "\t" || s == "\n" || s == "\r") continue;
 
                 std::string parentName = s;
                 int parentId = id[parentName];
@@ -255,7 +255,7 @@ void Parser::readCptRows(int childId) {
         // ciclo su ogni probabilità della riga
         for (int i = 0; i < numValues; i++) {
             nextToken();
-            while (s == ")" || s == "," || s == ";") nextToken();
+            while (s == ")" || s == "," || s == ";" || s == "|" || s == "\t" || s == "\n" || s == "\r") nextToken();
 
             double prob = std::stod(s);
             if (log) std::cout << " " << prob;

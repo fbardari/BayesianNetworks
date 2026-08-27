@@ -227,6 +227,39 @@ Quando la stringa letta corrisponde a una delle intestazioni dei blocchi (networ
 
 - Il metodo statico `Parser::importBIF(filename, log)` crea localmente un parser usa e getta che legge il file indicato in input e restituisce l'oggetto di tipo Network corrispondente.
 
+#### Implementazione delle specifiche del formato BIF
+
+- Nei blocchi `variable` (letti da `parseVariable()`) viene letto il tipo di nodo specificato dopo la keyword `type` e viene sollevata un'eccezione se il tipo non è `discrete` (unica tipologica supportata dal parser).
+- Il numero di valori possibili specificato dopo la keyword `discrete` viene confrontato con il numero di valori letti tra parentesi graffe -> se non corrisponde viene sollevata un'eccezione.
+    ```
+    variable nome_variabile {
+    type discrete [ 2 ] { true, false };
+    }
+    ```
+- Nell'elenco di valori possibili, come anche nelle tabelle CPT, sono supportati come delimitatori tutti quelli indicati nella documentazione (inclusi: `,`,`|`,`\t`,`\n`, `\r`).
+    - Quindi ad esempio, il blocco:
+        ```
+        probability (c | a) {
+        (true) 0.6, 0.4;
+        (false) 0.2, 0.8;
+        }
+        ```
+        è equivalente al blocco:
+        ```
+        probability (c | a) {
+        (true) 0.6 | 0.4;
+        (false) 0.2 | 0.8;
+        }
+        ```
+        o al blocco:
+        ```
+        probability (c | a) {
+        (true) 0.6 0.4;
+        (false) 0.2 0.8;
+        }
+        ```
+        etc.
+
 ### Utilities
 
 L'header `Utilities.hpp` contiene gli overload dell'operatore <<, per permettere di fare print di vettori e matrici.
