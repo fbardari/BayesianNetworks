@@ -107,15 +107,15 @@ void Parser::parseVariable() {
 
     while(nextToken() && s != "["); // aspetto "[" per numero di valori
 
-    nextToken();
-    int num_expected_values = std::stoi(s);
+    nextToken(); // leggo numero di valori
+    int num_expected_values = std::stoi(s); // lo salvo come intero
     if (log) std::cout << "Parser::parseVariable: attesi N=" << num_expected_values << " valori\n";
 
     while(nextToken() && s != "{"); // aspetto la seconda "{" per la lista variabili
 
     std::string value;
     while (nextToken() && s != "}") {
-        if(s == ",") continue;
+        if(s == "," || s == "|" || s == "\t" || s == "\n" || s == "\r") continue;
         value = s;
         if (log) std::cout << "Parser::parseVariable: trovato valore \'" << value << "\'\n";
 
@@ -165,7 +165,7 @@ void Parser::readParents(int childId) {
             if (log) std::cout << ", ha genitori:";
 
             while (nextToken() && s != "{" && s != ")") { // ciclo su tutti i genitori
-                if (s == ",") continue;
+                if (s == "," || s == "|" || s == "\t" || s == "\n" || s == "\r") continue;
 
                 std::string parentName = s;
                 int parentId = id[parentName];
@@ -201,7 +201,7 @@ void Parser::readCptTableNoParents(int childId) {
     if (log) std::cout << "Parser::parseProbability: salvate probabilità";
 
     while (nextToken() && s != "}") {
-        if (s == "," || s == ";") continue;
+        if (s == "," || s == ";" || s == "|" || s == "\t" || s == "\n" || s == "\r") continue;
 
         double prob = std::stod(s);
         variables[childId].CPT[0].push_back(prob);
@@ -228,7 +228,9 @@ void Parser::readCptRows(int childId) {
         // ciclo su ogni valore genitore della riga
         for (int i = 0; i < numParents; i++) {
             nextToken();
-            while (s == "(" || s == "," || s == ";") nextToken();
+            while (s == "(" || s == "," || s == ";" || s == "|" || s == "\t" || s == "\n" || s == "\r") {
+                nextToken();
+            }
 
             std::string valueName = s;
             int parentId = variables[childId].parents[i];
