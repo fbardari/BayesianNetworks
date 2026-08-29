@@ -16,5 +16,5 @@
     - ~~[ ] TODO: migliorare firma della funzione helper **Parser::getCptRow()**, non necessario che sia static, non necessario passaggio per riferimento~~ *rimossa inutile complicazione*
     - [x] *fatto*: rimuovere `file >> s` per lettura dei token, scrivere una funzione `nextToken()` che separi correttamente i token non spaziati
 5. [x] eventuale interfaccia utente
-6. [ ] probabilità condizionale
-7. [ ] variable elimination
+6. [x] probabilità condizionale (implementata nella query principale di VE)
+7. [x] variable elimination

@@ -26,7 +26,8 @@ Il programma è suddiviso nei seguenti moduli:
 
 Estensioni / moduli aggiuntivi (da valutare più avanti):
 
-- **Elimination**: implementerà eventualmente l'algoritmo di variable elimination per il calcolo delle probabilità (più efficiente dell'enumerazione completa).
+- **Elimination**: implementa eventualmente l'algoritmo di Variable Elimination per il calcolo delle probabilità (più efficiente dell'enumerazione completa);
+- **Factor**: classe che implementa i fattori utilizzati per l'algoritmo di Variable Elimination.
 
 ## Descrizione dettagliata dei moduli
 
