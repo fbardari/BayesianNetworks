@@ -18,3 +18,5 @@
 5. [x] eventuale interfaccia utente
 6. [x] probabilità condizionale (implementata nella query principale di VE)
 7. [x] variable elimination
+    - [ ] ordine di eliminazione?
+    - [ ] inserire VE nel menu
