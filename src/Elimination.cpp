@@ -1,5 +1,6 @@
 #include "Elimination.hpp"
 #include <algorithm>
+#include <unordered_set>
 
 Elimination::Elimination(const Network& network) : net(network) {
     updateFactors();
@@ -44,10 +45,23 @@ Factor Elimination::query(
     const std::map<int, int>& evidence, 
     const std::vector<int>& customOrder
 ) const {
-    /* creo una copia locale del vettore factors
+    /* variabili rilevanti = target + evidenza + loro antenati
+    le altre non contribuiscono al risultato e vanno escluse subito, */
+    std::unordered_set<int> relevant = net.getAncestors(targetId);
+    relevant.insert(targetId);
+    for (const auto& [evidenceVariable, evidenceValue] : evidence) {
+        std::unordered_set<int> evidenceAncestors = net.getAncestors(evidenceVariable);
+        relevant.insert(evidenceAncestors.begin(), evidenceAncestors.end());
+        relevant.insert(evidenceVariable);
+    }
+
+    /* creo una copia locale (filtrata) del vettore factors
     su cui verrà effettuata l'eliminazione
     (in base alla specifica query in input) */
-    std::vector<Factor> activeFactors = factors;
+    std::vector<Factor> activeFactors;
+    for (int i = 0; i < static_cast<int>(factors.size()); ++i) {
+        if (relevant.count(i)) activeFactors.push_back(factors[i]);
+    }
 
     // fai operazione restrict sulle eventuali evidenze
     // ciclo su tutti i fattori
@@ -60,10 +74,10 @@ Factor Elimination::query(
         }
     }
 
-    // ordine di eliminazione?
+    // ordine di eliminazione (solo variabili rilevanti, calcolate sopra)
     std::vector<int> eliminationOrder = customOrder;
     if (eliminationOrder.empty()) { // se non lo passo in input
-        for (int i = 0; i < net.size(); ++i) {
+        for (int i : relevant) {
             if (i != targetId && !evidence.count(i)) {
                 eliminationOrder.push_back(i);
             }
