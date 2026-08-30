@@ -19,9 +19,17 @@ leggendo nella CPT i valori p(X | ...)
 */
 Factor toFactor(int variableId) const;
 
+/* vettore che contiene i fattori costruiti leggendo la CPT
+per tutte le variabili della rete */
+std::vector<Factor> factors;
+
 public:
 // costruttore
 Elimination(const Network& network);
+
+/* aggiorna il vettore factors
+(da usare ad esempio se la rete viene modificata) */
+void updateFactors();
 
 // calcolo probabilità marginali e condizionali
 Factor query(int targetId, 

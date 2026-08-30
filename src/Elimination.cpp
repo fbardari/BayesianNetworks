@@ -1,7 +1,17 @@
 #include "Elimination.hpp"
 #include <algorithm>
 
-Elimination::Elimination(const Network& network) : net(network) {}
+Elimination::Elimination(const Network& network) : net(network) {
+    updateFactors();
+}
+
+void Elimination::updateFactors() {
+    factors.clear();
+    factors.reserve(net.size());
+    for (int i = 0; i < net.size(); ++i) {
+        factors.push_back(toFactor(i)); // crea un fattore per ogni variabile della rete
+    }
+}
 
 Factor Elimination::toFactor(int variableId) const {
     const Variable& var = net[variableId];
@@ -34,12 +44,10 @@ Factor Elimination::query(
     const std::map<int, int>& evidence, 
     const std::vector<int>& customOrder
 ) const {
-    // per ogni variabile della rete estrae i fattori
-    std::vector<Factor> activeFactors;
-    activeFactors.reserve(net.size());
-    for (int i = 0; i < net.size(); ++i) {
-        activeFactors.push_back(toFactor(i));
-    }
+    /* creo una copia locale del vettore factors
+    su cui verrà effettuata l'eliminazione
+    (in base alla specifica query in input) */
+    std::vector<Factor> activeFactors = factors;
 
     // fai operazione restrict sulle eventuali evidenze
     // ciclo su tutti i fattori
