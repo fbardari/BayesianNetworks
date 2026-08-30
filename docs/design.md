@@ -262,6 +262,10 @@ Il namespace `Test` contiene alcune funzioni utili per verificare il corretto fu
 - `Test::exampleNetwork()` restituisce la rete del file gradient.bif, creata manualmente (funzione utilizzata per verificare il corretto funzionamento del parser);
 - `Test::normalized(network)` restituisce true solo se tutte le probabilità marginali del network in input sono normalizzate a 1.0 (a meno del machine epsilon).
 
+### Factor & Elimination
+
+Si rimanda al file [elimination.md](./elimination.md) per la descrizione dettagliata dei moduli Factor ed Elimination.
+
 ## Fasi di sviluppo
 
 Si rimanda al file [todo.md](./todo.md) per la checklist dei passaggi fondamentali nelle fasi di sviluppo.
@@ -298,9 +302,13 @@ La descrizione dettagliata del Parser si trova adesso nella sezione [Parser](#Pa
 Inizialmente la lettura dei token (commits sezione precedente) era troppo poco intelligente; i token venivano letti usando `file >> s` e poi puliti dei caratteri di delimitazione, quindi il Parser si sarebbe facilmente confuso se i token non fosse apparsi come previsto. Per esempio se un token fosse comparso non distanziato da un delimitatore (ad esempio `0.4,0.6;` anziché `0.4, 0.6;`), avrebbe visto le due probabilità come un unico token, ripulito la stringa dei delimitatori (-> `0.40.6`!) e avrebbe fallito.
 Ho quindi rimosso *cleanString()* e abbandonato l'utilizzo indiscriminato di `file >> s` come strumento di lettura dei token, introducendo usare un metodo più intelligente `nextToken()` che separi correttamente i token non spaziati e i delimitatori (leggendo i token carattere per carattere, e appoggiandosi agli helper `isWhitespace(char)` e `isDelimiter(c)`). [link al commit](https://github.com/fbardari/BayesianNetworks/commit/076a915ce1af3d25ceaa64b4e916ea360951bd4b)
 
-### Fase 4: probabilità condizionale
+### Fase 4: variable elimination e probabilità condizionali
 
-...
+Le fasi di sviluppo della parte di variable elimination (che include anche il calcolo della probabilità condizionale, attraverso la query della classe Elimination) sono state le seguenti:
 
-### Fase 5: variable elimination
-...
+1. Implementazione della classe `Factor`, che descrive i fattori che vengono utilizzati dall'algoritmo di variable elimination per rappresentare le probabilità;
+    - include le operazioni fondamentali `restrict`, `sumOut`, `normalize` e l'overload dell'operatore `*` per il prodotto tra fattori;
+2. Sviluppo della classe `Elimination`
+    - contiene nel suo stato interno una reference ad una rete bayesiana (istanza della classe Network) e la lista dei fattori generati a partire dalle tabelle CPT delle sue variabili
+    - fornisce i metodi per eseguire le query e far partire l'algoritmo di eliminazione delle variabili
+3. Wrapper statici per istanziare automaticamente l'oggetto di tipo Elimination e ottenere direttamente le probabilità marginali/condizionali a partire da una rete bayesiana e una query (target/evidenze).

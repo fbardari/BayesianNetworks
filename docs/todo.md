@@ -19,4 +19,4 @@
 6. [x] probabilità condizionale (implementata nella query principale di VE)
 7. [x] variable elimination
     - [ ] ordine di eliminazione?
-    - [ ] inserire VE nel menu
+    - [x] inserire VE nel menu
