@@ -68,9 +68,32 @@ La classe `Elimination` (si vedano `Elimination.hpp` e `Elimination.cpp`) fornis
 
 ### Query
 
-Il metodo pubblico `query()` ...
+Il metodo pubblico `query(targetId, evidence, customOrder)` prende in input:
+
+- la variabile target;
+- una eventuale mappa di evidenze;
+- facoltativo: un ordine personalizzato di eliminazione.
+
+ed esegue il calcolo della probabilità seguendo i seguenti passaggi:
+
+1. Calcola l'insieme delle **variabili rilevanti = target + evidenze + loro antenati**, e salva un vettore di fattori che comprende solo quelli associati a queste variabili.
+
+2. **Restrizione delle evidenze**: per ogni variabile di evidenza applica la funzione restrict ai fattori che la contengono.
+
+3. **Ordine di eliminazione**: se non viene specificato un ordine di eliminazione in input (`customOrder`), costruisce un ordine contenente tutte le variabili rilevanti escludendo il target e le evidenze (default: ordine specificato dagli ID).
+
+4. **Eliminazione** vera e propria. *Per ogni variabile*, nell'ordine di eliminazione:
+    - separa i fattori che contengono la variabile da eliminare da quelli che non la contengono;
+    - moltiplica i fattori che la contengono ottenendo un unico fattore combinato
+    - applica `sumOut()` su questo fattore (elimina la variabile), aggiungendo il nuovo fattore ottenuto all'elenco dei fattori attivi.
+
+5. **Moltiplicazione e normalizzazione**: moltiplica tutti i fattori attivi rimasti (contengono tutti solo il target) e applica `normalize()` per ottenere la distribuzione di probabilità finale.
+
+Restituisce il fattore finale che contiene nella sua "table" la probabilità condizionata all'evidenza (o marginale se non è stata specificata l'evidenza) per ogni possibile valore del target.
 
 ### Funzioni statiche per calcolo delle probabilità
+
+Sono implementate in `Elimination_probability.cpp` le seguenti funzioni statiche che permettono di calcolare le probabilità senza dover creare manualmente l'istanza di Elimination:
 
 - `getConditionalProbability(network, variableName, valueName, evidenceNames)`:
     - **input**: la rete bayesiana, nome della variabile target, valore assegnato al target, evidenze rappresentate sottoforma di mappa di stringhe;
