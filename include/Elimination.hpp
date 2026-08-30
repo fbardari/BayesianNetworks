@@ -47,6 +47,10 @@ Factor query(
     const std::vector<std::string>& customOrderNames = {}
 ) const;
 
+
+/* FUNZIONI WRAPPER per probabilità marginale e condizionale
+creando automaticamente istanza di Elimination e runnando la query opportuna */ 
+
 static double getMarginalProbability(
     const Network& inputNetwork,
     const std::string& variableName,
