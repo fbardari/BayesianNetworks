@@ -5,20 +5,7 @@ double Elimination::getMarginalProbability(
     const std::string& variableName,
     const std::string& valueName
 ) {
-    Elimination VE(inputNetwork); // crea istanza locale di Elimination
-
-    int variableId = inputNetwork.getVariableId(variableName);
-    
-    /* elimina variabili ottenendo fattore finale
-    contenente probabilità marginali
-    per ogni valore possibile del target */
-    Factor finalFactor = VE.query(variableId, {}); // ordine eliminazione default!
-
-    // estrai probabilità associata al valore in input
-    int valueIndex = inputNetwork.getValueIndex(variableId, valueName);
-    double result = finalFactor.table[valueIndex];
-
-    return result;
+    return getConditionalProbability(inputNetwork, variableName, valueName, {});
 }
 
 double Elimination::getConditionalProbability(
