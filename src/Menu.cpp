@@ -1,5 +1,7 @@
 #include "Menu.hpp"
+#include "Elimination.hpp"
 #include <limits>
+#include <map>
 
 Menu::Menu() = default;
 
@@ -94,6 +96,98 @@ void Menu::jointMenu() {
     std::cout << " > Probabilità della configurazione = " << prob;
     pause();
 }
+
+
+void Menu::veMargMenu() {
+    clearScreen();
+    std::cout << "\n > CALCOLO PROBABILITÀ MARGINALE (Variable Elimination)\n";
+
+    try {
+        std::cout << "\n > Variabili disponibili: " << network.getNames();
+
+        std::string variableName, valueName;
+
+        std::cout << "\n > Inserisci il nome della variabile target\n > ";
+        std::getline(std::cin, variableName);
+
+        std::cout << "\n > Valori possibili: " << network.getValues(variableName);
+
+        std::cout << "\n > Inserisci il valore desiderato\n > ";
+        std::getline(std::cin, valueName);
+
+        // calcolo risultato
+        double prob = Elimination::getMarginalProbability(network, variableName, valueName);
+        
+        std::cout << "\n > P(" << variableName << " = " << valueName << ") = " << prob << "\n";
+    } catch (const std::invalid_argument& e) {
+        std::cout << "\n\n > Errore: " << e.what();
+    } catch (const std::out_of_range& e) {
+        std::cout << "\n\n > Errore di indice/valore: " << e.what();
+    }
+    pause();
+}
+
+void Menu::veCondMenu() {
+    clearScreen();
+    std::cout << "\n > CALCOLO PROBABILITÀ CONDIZIONALE (Variable Elimination)\n";
+
+    try {
+        std::cout << "\n > Variabili: " << network.getNames();
+
+        std::string targetName, targetValue;
+
+        std::cout << "\n > Inserisci il nome della variabile target\n > ";
+        std::getline(std::cin, targetName);
+
+        std::cout << "\n > Valori possibili: " << network.getValues(targetName);
+
+        std::cout << "\n > Inserisci il valore della variabile target\n > ";
+        std::getline(std::cin, targetValue);
+
+        // mappa evidenze
+        std::map<std::string, std::string> evidence;
+        std::string evVar, evVal;
+
+        std::cout << "\n INSERIRE EVIDENZE\n";
+        while (true) {
+            std::cout << "\n > Nome variabile di evidenza (oppure invio per calcolare)\n > ";
+            std::getline(std::cin, evVar);
+            
+            if (evVar.empty()) break; // termina inserimento delle evidenze
+
+            if (evVar == targetName) {
+                std::cout << " > Errore: l'evidenza non può coincidere con la variabile target!\n";
+                continue;
+            }
+
+            std::cout << " > Valori possibili per " << evVar << ": " << network.getValues(evVar) << "\n > ";
+            std::getline(std::cin, evVal);
+
+            evidence[evVar] = evVal;
+        }
+
+        double prob = Elimination::getConditionalProbability(network, targetName, targetValue, evidence);
+
+        std::cout << "\n > P(" << targetName << " = " << targetValue;
+        if (!evidence.empty()) {
+            std::cout << " | ";
+            bool first = true;
+            for (const auto& [var, val] : evidence) {
+                if (!first) std::cout << ", ";
+                std::cout << var << " = " << val;
+                first = false;
+            }
+        }
+        std::cout << ") = " << prob << "\n";
+
+    } catch (const std::invalid_argument& e) {
+        std::cout << "\n\n > Errore invalid argument: " << e.what();
+    } catch (const std::out_of_range& e) {
+        std::cout << "\n\n > Errore out of range: " << e.what();
+    }
+    pause();
+}
+
 
 void Menu::addVariableMenu() {
     clearScreen();
@@ -212,6 +306,8 @@ void Menu::mainMenu() {
         std::cout << " > size = mostra dimensioni\n";
         std::cout << " > marg = calcola una probabilità marginale (enumerazione completa)\n";
         std::cout << " > joint = calcola probabilità data una configurazione completa\n\n";
+        std::cout << " > ve_marg = calcola probabilità marginale con Variable Elimination\n";
+        std::cout << " > ve_cond = calcola probabilità condizionale con Variable Elimination\n\n";
         std::cout << " > " << (log ? "log = disattiva log\n" : "log = attiva log\n");
         std::cout << " > add = aggiungi nuova variabile\n";
         std::cout << " > load = carica nuovo file\n";
@@ -266,5 +362,9 @@ void Menu::mainMenu() {
         topologicalOrderMenu();
     } else if (input == "joint") {
         jointMenu();
+    } else if (input == "ve_marg") {
+        veMargMenu();
+    } else if (input == "ve_cond") {
+        veCondMenu();
     }
 }

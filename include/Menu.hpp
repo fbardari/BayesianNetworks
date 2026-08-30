@@ -29,6 +29,8 @@ void jointMenu(); // menu per calcolo joint probability
 void topologicalOrderMenu(); // mostra variabili in ordine topologico
 void addVariableMenu(); // menu aggiunta variabile
 void resetMenu(); // menu che chiede conferma prima di resettare il network caricato
+void veMargMenu();
+void veCondMenu();
 
 void clearScreen(); // pulisce lo schermo
 void pause(); // premi invio per menu principale
