@@ -11,13 +11,22 @@ int main() {
     // menu.run();
     Network net = Test::exampleNetwork();
 
-    Elimination ve(net);
+    std::cout << Elimination::getMarginalProbability(net, "e", "true") << "\n";
+    std::cout << Elimination::getMarginalProbability(net, "e", "false") << "\n";
 
-    Factor res = ve.query("e", {});
+    std::cout << Elimination::getConditionalProbability(
+        net,
+        "e", "true",
+        {
+            {"d", "true"}
+        }
+    ) << "\n";
+    std::cout << Elimination::getConditionalProbability(
+        net,
+        "e", "false",
+        {
+            {"d", "true"}
+        }
+    ) << "\n";
 
-    // Leggi i risultati
-    const auto& values = net.getValues("e");
-    for (size_t i = 0; i < res.table.size(); ++i) {
-        std::cout << "P(e = " << values[i] << ") = " << res.table[i] << "\n";
-    }
 }

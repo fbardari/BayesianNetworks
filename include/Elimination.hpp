@@ -32,16 +32,34 @@ Elimination(const Network& network);
 void updateFactors();
 
 // calcolo probabilità marginali e condizionali
-Factor query(int targetId, 
-                const std::map<int, int>& evidence, 
-                const std::vector<int>& customOrder = {}) const;
+Factor query(
+    int targetId, 
+    const std::map<int, int>& evidence, 
+    const std::vector<int>& customOrder = {}
+) const;
 
 /* overload di query() per calcolare
 probabilità usando le stringhe
 */
-Factor query(const std::string& targetName, 
-                const std::map<std::string, std::string>& evidenceNames, 
-                const std::vector<std::string>& customOrderNames = {}) const;
+Factor query(
+    const std::string& targetName, 
+    const std::map<std::string, std::string>& evidenceNames, 
+    const std::vector<std::string>& customOrderNames = {}
+) const;
+
+static double getMarginalProbability(
+    const Network& inputNetwork,
+    const std::string& variableName,
+    const std::string& valueName
+);
+
+static double getConditionalProbability(
+    const Network& inputNetwork,
+    const std::string& variableName,
+    const std::string& valueName,
+    const std::map<std::string, std::string>& evidenceNames
+);
+
 };
 
 #endif
