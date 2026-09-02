@@ -80,7 +80,7 @@ ed esegue il calcolo della probabilità seguendo i seguenti passaggi:
 
 2. **Restrizione delle evidenze**: per ogni variabile di evidenza applica la funzione restrict ai fattori che la contengono.
 
-3. **Ordine di eliminazione**: se non viene specificato un ordine di eliminazione in input (`customOrder`), costruisce un ordine contenente tutte le variabili rilevanti escludendo il target e le evidenze (default: ordine specificato dagli ID).
+3. **Ordine di eliminazione**: se non viene specificato un ordine di eliminazione in input (`customOrder`), costruisce un ordine contenente tutte le variabili rilevanti escludendo il target e le evidenze (default: ordine min-degree).
 
 4. **Eliminazione** vera e propria. *Per ogni variabile*, nell'ordine di eliminazione:
     - separa i fattori che contengono la variabile da eliminare da quelli che non la contengono;
@@ -104,3 +104,11 @@ Sono implementate in `Elimination_probability.cpp` le seguenti funzioni statiche
     - **input**: la rete bayesiana, nome della variabile target, valore assegnato al target;
     - **output**: probabilità marginale;
     - **cosa fa**: chiama `getConditionalProbability()` senza specificare nessuna evidenza, calcolando quindi la probabilità marginale.
+
+### Ordine di eliminazione min-degree
+
+Se viene fatta partire la query senza specificare un ordine di eliminazione personalizzato, viene utilizzato l'ordine *min-degree*, restituito dalla funzione `minDegreeOrder(initialFactors, toEliminate)`.
+
+Funzionamento: ad ogni passo, viene eliminata la variabile che, se eliminata ora, produce il fattore combined più piccolo (la dimensione viene approssimata guardando quante variabili vicine ha nel grafo, variabili vicine = se compaiono insieme nello scope di uno stesso fattore attivo).
+
+Elimina sempre quella con grado minimo (cioè con meno vicini).

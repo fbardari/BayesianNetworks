@@ -23,6 +23,12 @@ Factor toFactor(int variableId) const;
 per tutte le variabili della rete */
 std::vector<Factor> factors;
 
+// calcola ordine di eliminazione con min-degree
+std::vector<int> minDegreeOrder(
+    const std::vector<Factor>& initialFactors,
+    const std::unordered_set<int>& toEliminate
+) const;
+
 public:
 // costruttore
 Elimination(const Network& network);

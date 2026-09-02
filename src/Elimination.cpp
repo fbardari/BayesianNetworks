@@ -40,6 +40,59 @@ Factor Elimination::toFactor(int variableId) const {
     return f;
 }
 
+std::vector<int> Elimination::minDegreeOrder(
+    const std::vector<Factor>& initialFactors,
+    const std::unordered_set<int>& toEliminate
+) const {
+    /* costruisco grafo di interazione (non orientato)
+    adiacenza tra le variabili che compaiono insieme
+    nello scope di almeno un fattore */ 
+    std::unordered_map<int, std::unordered_set<int>> graph;
+    for (const auto& f : initialFactors) {
+        for (int a : f.scope)
+            for (int b : f.scope)
+                if (a != b) graph[a].insert(b);
+    }
+
+    std::unordered_set<int> remaining = toEliminate;
+    std::vector<int> order;
+
+    while (!remaining.empty()) {
+        /* scelgo variabile con numero di vicini minimo
+
+        eliminare un nodo con pochi vicini significa che:
+        prodotto dei fattori correlati -> tabella più piccola
+        */
+        int best = -1, bestDegree = -1;
+        for (int v : remaining) {
+            int degree = static_cast<int>(graph[v].size());
+            if (best == -1 || degree < bestDegree) {
+                best = v;
+                bestDegree = degree;
+            }
+        }
+
+        /* fill-in
+        quando eliminiamo "best", i suoi vicini finiscono nello scope del nuovo fattore generato da sumOut()
+        devono essere quindi connessi tutti tra loro per aggiornare il grafo per i passaggi successivi
+
+        i.e. per dare l'ordine corretto di eliminazione,
+        il grafo deve rappresentare la struttura dei fattori ATTIVI in quel momento */
+        for (int a : graph[best]) {
+            for (int b : graph[best]) {
+                if (a != b) graph[a].insert(b);
+            }
+            graph[a].erase(best);
+        }
+        graph.erase(best);
+
+        order.push_back(best);
+        remaining.erase(best);
+    }
+
+    return order;
+}
+
 Factor Elimination::query(
     int targetId, 
     const std::map<int, int>& evidence, 
@@ -77,11 +130,11 @@ Factor Elimination::query(
     // ordine di eliminazione (solo variabili rilevanti, calcolate sopra)
     std::vector<int> eliminationOrder = customOrder;
     if (eliminationOrder.empty()) { // se non lo passo in input
+        std::unordered_set<int> toEliminate;
         for (int i : relevant) {
-            if (i != targetId && !evidence.count(i)) {
-                eliminationOrder.push_back(i);
-            }
+            if (i != targetId && !evidence.count(i)) toEliminate.insert(i);
         }
+        eliminationOrder = minDegreeOrder(activeFactors, toEliminate);
     }
 
     // sumOut() cioè eliminazione variabili vera e propria
