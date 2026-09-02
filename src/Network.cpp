@@ -151,6 +151,27 @@ int Network::getCptRow(int variableId, const std::vector<int>& assignment) const
     return getCptRow((*this)[variableId], assignment);
 }
 
+
+int Network::getCptRow(
+    int id,
+    const std::vector<int>& assignment,
+    const std::unordered_map<int, int>& localIndexMap
+) const {
+    int row = 0;
+    int mult = 1;
+
+    const Variable& variable = variables[id];
+
+    for (int i = static_cast<int>(variable.parents.size()) - 1; i >= 0; i--) {
+        int parentId = variable.parents[i];
+        int assignedValueId = assignment[localIndexMap.at(parentId)];
+
+        row += assignedValueId * mult;
+        mult *= variables[parentId].values.size();
+    }
+    return row;
+}
+
 std::unordered_set<int> Network::getAncestors(int variableId) const {
     std::unordered_set<int> visited;
     std::queue<int> q;

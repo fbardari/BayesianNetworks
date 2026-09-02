@@ -55,6 +55,13 @@ int getCptRow(const Variable& variable, const std::vector<int>& assignment) cons
 // (ID variabile, assignment COMPLETO) -> riga corrispondente tabella CPT
 int getCptRow(int variableId, const std::vector<int>& assignment) const;
 
+// overload: stessa cosa ma per assignment PARZIALI sui genitori di una variabile
+int getCptRow(
+    int variableId, // ID variabile
+    const std::vector<int>& assigment, // assignment SOLO GENITORI
+    const std::unordered_map<int, int>& localIndexMap // mappa: ID variabile -> posizione in assignment
+) const;
+
 // (nome variabile, nome del valore assegnato) -> MARGINAL PROBABILITY
 double getMarginalProbability(const std::string& variableName, const std::string& valueName) const;
 

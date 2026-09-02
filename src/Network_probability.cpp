@@ -37,10 +37,17 @@ double Network::getMarginalProbability(const std::string& variableName, const st
         if (relevant.count(id)) relevantOrder.push_back(id);
     }
 
-    // stato iniziale
+    // mappa: ID globale variabile -> posizione locale nel vettore assignment
+    std::unordered_map<int, int> localIndex;
+    localIndex.reserve(relevantOrder.size());
+    for (size_t i = 0; i < relevantOrder.size(); i++) {
+        localIndex[relevantOrder[i]] = static_cast<int>(i);
+    }
+
+    // stato iniziale (size = numero variabili rilevanti)
     // assignment con solo target fissato, p = 1.0
-    std::vector<int> initialAssignment(this->size(), -1);
-    initialAssignment[variableId] = valueIndex; // es. [-1 -1 -1 valueIndex -1 -1 -1]
+    std::vector<int> initialAssignment(relevantOrder.size(), -1);
+    initialAssignment[localIndex[variableId]] = valueIndex;
 
     std::vector<std::vector<int>> states;
     std::vector<double> stateProbs;
@@ -55,17 +62,19 @@ double Network::getMarginalProbability(const std::string& variableName, const st
         std::vector<std::vector<int>> nextStates;
         std::vector<double> nextProbs;
 
+        int idx = localIndex[id];
+
         // scorro tutti gli stati correnti
         for (int i = 0; i < static_cast<int>(states.size()); i++) {
 
             std::vector<int> assignment = states[i];
             double prob = stateProbs[i];
 
-            if (assignment[id] != -1) {
-                // variabile già fissata (target) 
+            if (assignment[idx] != -1) {
+                // variabile già fissata (target)
                 // moltiplico solo il suo fattore CPT
-                int row = getCptRow(variables[id], assignment);
-                double factor = variables[id].CPT[row][assignment[id]];
+                int row = getCptRow(id, assignment, localIndex);
+                double factor = variables[id].CPT[row][assignment[idx]];
 
                 nextStates.push_back(assignment);
                 nextProbs.push_back(prob * factor);
@@ -77,9 +86,9 @@ double Network::getMarginalProbability(const std::string& variableName, const st
 
                 for (int v = 0; v < possibleValues; v++) {
                     std::vector<int> newAssignment = assignment;
-                    newAssignment[id] = v;
+                    newAssignment[idx] = v;
 
-                    int row = getCptRow(variables[id], newAssignment);
+                    int row = getCptRow(id, newAssignment, localIndex);
                     double factor = variables[id].CPT[row][v];
 
                     nextStates.push_back(newAssignment);

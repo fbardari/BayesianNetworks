@@ -119,7 +119,8 @@ I seguenti metodi calcolano le probabilità (sono implementati nel file `Network
         - vettore di interi che contiene l'assignment per *tutte* le variabili della rete (esempio `a=true, b=false, c=true -> {1, 0, 1}`).
     - **output**: indice della riga della tabella CPT corrispondente a quell'assignment;
     - **cosa fa**: scorre sui genitori e, usando gli indici dei valori nell’assignment e un moltiplicatore basato sul numero di valori possibili, calcola e restituisce l’indice della riga corrispondente nella CPT (ogni genitore contribuisce a determinare "di quanti passi spostarsi" nella tabella);
-    - **complessità**: un ciclo for visita ogni genitore eseguendo operazioni di complessità costante -> complessità totale O(N_genitori).
+    - **complessità**: un ciclo for visita ogni genitore eseguendo operazioni di complessità costante -> complessità totale O(N_genitori)
+- l'overload **`getCptRow(variable, assignment, localIndexMap)`** funziona allo stesso modo, ma permette di dare in input un assignment parziale limitato ai soli genitori (utilizzato in `getMarginalProbability()`), fornendo in input una mappa che associ ad ogni ID (globale) di variabile, una posizione locale nel vettore assignment.
 
 - `getJointProbability(assignment)`: calcola la probabilità congiunta data una configurazione completa di assegnamento
 
