@@ -109,6 +109,14 @@ Sono implementate in `Elimination_probability.cpp` le seguenti funzioni statiche
 
 Se viene fatta partire la query senza specificare un ordine di eliminazione personalizzato, viene utilizzato l'ordine *min-degree*, restituito dalla funzione `minDegreeOrder(initialFactors, toEliminate)`.
 
-Funzionamento: ad ogni passo, viene eliminata la variabile che, se eliminata ora, produce il fattore combined più piccolo (la dimensione viene approssimata guardando quante variabili vicine ha nel grafo, variabili vicine = se compaiono insieme nello scope di uno stesso fattore attivo).
+**Funzionamento**: ad ogni passo, viene eliminata la variabile che, se eliminata ora, produce il fattore combined più piccolo (la dimensione viene approssimata guardando quante variabili vicine ha nel grafo, variabili vicine = se compaiono insieme nello scope di uno stesso fattore attivo) -> elimina la variabile con grado minimo (con meno vicini).
 
-Elimina sempre quella con grado minimo (cioè con meno vicini).
+### Complessità
+
+L'algoritmo di variable elimination ha una complessità temporale O(N * k^(w+1)).
+Dove:
+- N è il numero di variabili da eliminare;
+- k è il numero di valori che una variabile può assumere (assumendo che tutte le variabili abbiano lo stesso numero di valori);
+- w è il numero massimo di variabili presenti contemporaneamenete nello scope del fattore più grande generato.
+
+Usare un'ordine di eliminazione min-degree permette di controllare la dimensione dei fattori, riducendo al minimo w -> si evita la complessità temporale esponenziale.
