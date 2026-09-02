@@ -66,7 +66,7 @@ La classe `Elimination` (si vedano `Elimination.hpp` e `Elimination.cpp`) fornis
 
 - il costruttore prende in input una rete bayesiana e costruisce i fattori associati a tutte le sue variabili (chiamando `updateFactors()`, salvandoli quindi in `factors`).
 
-### Query
+### Query
 
 Il metodo pubblico `query(targetId, evidence, customOrder)` prende in input:
 
